@@ -19,11 +19,6 @@ func Print(ctx context.Context, nodes []string, out io.Writer) bool {
 	return value
 }
 
-type box_t struct {
-	Width  int
-	Height int
-}
-
 func (b *box_t) Print(ctx context.Context,
 	nodes []string,
 	offset int,
@@ -107,6 +102,7 @@ func Choice(sources []string, out io.Writer) string {
 	nodes := make([]string, 0, len(sources))
 	draws := make([]string, 0, len(sources))
 	b := New()
+	defer b.Close()
 	for _, text := range sources {
 		val := truncate(text, b.Width-1)
 		if val != "" {
@@ -127,7 +123,7 @@ func Choice(sources []string, out io.Writer) string {
 		draws[cursor] = truncate(nodes[cursor], b.Width-1)
 		last := cursor
 		for last == cursor {
-			switch get() {
+			switch b.GetCmd() {
 			case LEFT:
 				if cursor-h >= 0 {
 					cursor -= h

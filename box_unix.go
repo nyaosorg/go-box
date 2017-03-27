@@ -1,29 +1,33 @@
-// +build windows
+// -build windows
 package box
 
-import (
-	getch "github.com/zetamatta/go-getch"
-)
+import "github.com/mattn/go-tty"
 
 type box_t struct {
 	Width  int
 	Height int
+	Tty    *tty.TTY
 }
 
 func New() *box_t {
-	w, h := GetScreenBufferInfo().ViewSize()
+	tty1, err := tty.Open()
+	if err != nil {
+		panic(err)
+	}
+	w, h, err := tty1.Size()
 	return &box_t{
-		Width:  w - 1,
-		Height: h - 1,
+		Width:  w,
+		Height: h,
+		Tty:    tty1,
 	}
 }
 
 func (b *box_t) GetCmd() int {
-	k := getch.All().Key
-	if k == nil {
+	key, err := b.Tty.ReadRune()
+	if err != nil {
 		return NONE
 	}
-	switch k.Rune {
+	switch key {
 	case 'h', ('b' & 0x1F):
 		return LEFT
 	case 'l', ('f' & 0x1F):
@@ -37,19 +41,9 @@ func (b *box_t) GetCmd() int {
 	case '\x1B', ('g' & 0x1F):
 		return LEAVE
 	}
-
-	switch k.Scan {
-	case K_LEFT:
-		return LEFT
-	case K_RIGHT:
-		return RIGHT
-	case K_DOWN:
-		return DOWN
-	case K_UP:
-		return UP
-	}
 	return NONE
 }
 
 func (b *box_t) Close() {
+	b.Tty.Close()
 }
