@@ -13,10 +13,10 @@ import (
 
 var ansiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
-func BoxPrint(ctx context.Context, nodes []string, out io.Writer) bool {
-	b := newbox()
+func Print(ctx context.Context, nodes []string, out io.Writer) bool {
+	b := New()
 	b.Height = 0
-	value, _, _ := b.boxPrint(ctx, nodes, 0, out)
+	value, _, _ := b.Print(ctx, nodes, 0, out)
 	return value
 }
 
@@ -25,7 +25,7 @@ type box_t struct {
 	Height int
 }
 
-func newbox() *box_t {
+func New() *box_t {
 	w, h := GetScreenBufferInfo().ViewSize()
 	return &box_t{
 		Width:  w - 1,
@@ -33,7 +33,7 @@ func newbox() *box_t {
 	}
 }
 
-func (b *box_t) boxPrint(ctx context.Context,
+func (b *box_t) Print(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (bool, int, int) {
@@ -144,11 +144,11 @@ func get() int {
 	return NONE
 }
 
-func BoxChoice(sources []string, out io.Writer) string {
+func Choice(sources []string, out io.Writer) string {
 	cursor := 0
 	nodes := make([]string, 0, len(sources))
 	draws := make([]string, 0, len(sources))
-	b := newbox()
+	b := New()
 	for _, text := range sources {
 		val := truncate(text, b.Width-1)
 		if val != "" {
@@ -162,7 +162,7 @@ func BoxChoice(sources []string, out io.Writer) string {
 	offset := 0
 	for {
 		draws[cursor] = BOLD_ON + truncate(nodes[cursor], b.Width-1) + BOLD_OFF
-		status, _, h := b.boxPrint(nil, draws, offset, out)
+		status, _, h := b.Print(nil, draws, offset, out)
 		if !status {
 			return ""
 		}

@@ -21,7 +21,7 @@ func main() {
 	for i := 0; i < len(list); i++ {
 		list[i] = strings.TrimSpace(list[i])
 	}
-	result := box.BoxChoice(
+	result := box.Choice(
 		list,
 		colorable.NewColorableStderr())
 
