@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/mattn/go-runewidth"
-	getch "github.com/zetamatta/go-getch"
 )
 
 var ansiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
@@ -23,14 +22,6 @@ func Print(ctx context.Context, nodes []string, out io.Writer) bool {
 type box_t struct {
 	Width  int
 	Height int
-}
-
-func New() *box_t {
-	w, h := GetScreenBufferInfo().ViewSize()
-	return &box_t{
-		Width:  w - 1,
-		Height: h - 1,
-	}
 }
 
 func (b *box_t) Print(ctx context.Context,
@@ -110,39 +101,6 @@ const (
 	ENTER = 5
 	LEAVE = 6
 )
-
-func get() int {
-	k := getch.All().Key
-	if k == nil {
-		return NONE
-	}
-	switch k.Rune {
-	case 'h', ('b' & 0x1F):
-		return LEFT
-	case 'l', ('f' & 0x1F):
-		return RIGHT
-	case 'j', ('n' & 0x1F), ' ':
-		return DOWN
-	case 'k', ('p' & 0x1F), '\b':
-		return UP
-	case '\r', '\n':
-		return ENTER
-	case '\x1B', ('g' & 0x1F):
-		return LEAVE
-	}
-
-	switch k.Scan {
-	case K_LEFT:
-		return LEFT
-	case K_RIGHT:
-		return RIGHT
-	case K_DOWN:
-		return DOWN
-	case K_UP:
-		return UP
-	}
-	return NONE
-}
 
 func Choice(sources []string, out io.Writer) string {
 	cursor := 0
