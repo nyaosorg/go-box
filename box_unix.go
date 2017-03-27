@@ -1,4 +1,5 @@
-// -build windows
+// +build !windows
+
 package box
 
 import "github.com/mattn/go-tty"
