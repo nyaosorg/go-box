@@ -13,17 +13,21 @@ How To Build
 On Windows
 ----------
 
-	git clone https://github.com/zetamatta/go-box
-	cd go-box
-	go get github.com/mattn/go-runewidth
-	go get github.com/zetamatta/go-getch
-	go build
+        git clone https://github.com/zetamatta/go-box
+        cd go-box
+        go get github.com/mattn/go-runewidth
+        go get github.com/zetamatta/go-getch
+        go build
+        cd box
+        go build
 
 On UNIX(tested on FreeBSD)
 -------------------------
 
-	git clone https://github.com/zetamatta/go-box
-	cd go-box
-	go get github.com/mattn/go-runewidth
-	go get github.com/mattn/go-tty
-	go build
+        git clone https://github.com/zetamatta/go-box
+        cd go-box
+        go get github.com/mattn/go-runewidth
+        go get github.com/mattn/go-tty
+        go build
+        cd box
+        go build
