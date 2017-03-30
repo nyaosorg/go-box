@@ -1,20 +1,29 @@
 box
 ===
 
-Read lines from STDIN, Select one by cursor(HJKL) & Output chosen one to STDOUT.
+- `box` reads choices from STDIN, 
+- On `box`, the user selects one by cursor (HJKL,C-n&C-p&C-f&C-b)
+- `box` outputs chosen one to STDOUT.
 
-(1) Select file to edit with vim
+<img src="box0.png" />
 
-<img src="box1.png" />
+How To Build
+============
 
-(2) Start **`./box`** to choose one of files.
+On Windows
+----------
 
-<img src="box2.png" />
+	git clone https://github.com/zetamatta/go-box
+	cd go-box
+	go get github.com/mattn/go-runewidth
+	go get github.com/zetamatta/go-getch
+	go build
 
-(3) Select `box.go`
+On UNIX(tested on FreeBSD)
+-------------------------
 
-<img src="box3.png" />
-
-(4) Type `Enter` to start vim
-
-<img src="box4.png" />
+	git clone https://github.com/zetamatta/go-box
+	cd go-box
+	go get github.com/mattn/go-runewidth
+	go get github.com/mattn/go-tty
+	go build
