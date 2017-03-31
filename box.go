@@ -125,21 +125,13 @@ func Choice(sources []string, out io.Writer) string {
 		for last == cursor {
 			switch b.GetCmd() {
 			case LEFT:
-				if cursor-h >= 0 {
-					cursor -= h
-				}
+				cursor = (cursor + len(nodes) - h) % len(nodes)
 			case RIGHT:
-				if cursor+h < len(nodes) {
-					cursor += h
-				}
+				cursor = (cursor + h) % len(nodes)
 			case DOWN:
-				if cursor+1 < len(nodes) {
-					cursor++
-				}
+				cursor = (cursor + 1) % len(nodes)
 			case UP:
-				if cursor > 0 {
-					cursor--
-				}
+				cursor = (cursor + len(nodes) - 1) % len(nodes)
 			case ENTER:
 				return nodes[cursor]
 			case LEAVE:
