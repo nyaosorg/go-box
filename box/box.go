@@ -18,6 +18,13 @@ func main() {
 		return
 	}
 	list := strings.Split(string(data), "\n")
+	switch len(list) {
+	case 0:
+		os.Exit(1)
+	case 1:
+		fmt.Println(strings.TrimSpace(list[0]))
+		os.Exit(0)
+	}
 	for i := 0; i < len(list); i++ {
 		list[i] = strings.TrimSpace(list[i])
 	}
