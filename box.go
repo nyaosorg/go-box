@@ -113,6 +113,11 @@ func Choice(sources []string, out io.Writer) string {
 	io.WriteString(out, CURSOR_OFF)
 	defer io.WriteString(out, CURSOR_ON)
 
+	if len(nodes) <= 0 {
+		nodes = []string{""}
+		draws = []string{""}
+	}
+
 	offset := 0
 	for {
 		draws[cursor] = BOLD_ON + truncate(nodes[cursor], b.Width-1) + BOLD_OFF
