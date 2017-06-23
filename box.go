@@ -58,8 +58,10 @@ func (b *box_t) Print(ctx context.Context,
 		}
 	}
 
-	for i := offset; i < i_end; i++ {
-		fmt.Fprintln(out, string(lines[i]))
+	i := offset
+	for {
+		fmt.Fprint(out, string(lines[i]))
+		fmt.Fprint(out, "\x1B[0K")
 		if ctx != nil {
 			select {
 			case <-ctx.Done():
@@ -67,6 +69,11 @@ func (b *box_t) Print(ctx context.Context,
 			default:
 			}
 		}
+		i++
+		if i >= i_end {
+			break
+		}
+		fmt.Fprintln(out)
 	}
 	return true, nodePerLine, nlines
 }
@@ -134,9 +141,15 @@ func Choice(sources []string, out io.Writer) string {
 			case RIGHT:
 				cursor = (cursor + h) % len(nodes)
 			case DOWN:
-				cursor = (cursor + 1) % len(nodes)
+				cursor++
+				if cursor >= len(nodes) {
+					cursor = 0
+				}
 			case UP:
-				cursor = (cursor + len(nodes) - 1) % len(nodes)
+				cursor--
+				if cursor < 0 {
+					cursor = len(nodes) - 1
+				}
 			case ENTER:
 				return nodes[cursor]
 			case LEAVE:
@@ -146,15 +159,17 @@ func Choice(sources []string, out io.Writer) string {
 			// x := cursor / h
 			y := cursor % h
 			if y < offset {
-				offset--
+				offset = y
+				// offset--
 			} else if y >= offset+b.Height {
-				offset++
+				offset = y - b.Height + 1
+				// offset++
 			}
 		}
 		if h < b.Height {
-			fmt.Fprintf(out, "\x1B[%dA", h)
+			fmt.Fprintf(out, "\x1B[%dA\r", h-1)
 		} else {
-			fmt.Fprintf(out, "\x1B[%dA", b.Height)
+			fmt.Fprintf(out, "\x1B[%dA\r", b.Height-1)
 		}
 	}
 }

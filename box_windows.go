@@ -14,8 +14,8 @@ type box_t struct {
 func New() *box_t {
 	w, h := GetScreenBufferInfo().ViewSize()
 	return &box_t{
-		Width:  w - 1,
-		Height: h - 1,
+		Width:  w,
+		Height: h,
 	}
 }
 

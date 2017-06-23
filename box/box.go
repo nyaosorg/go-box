@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	box "github.com/zetamatta/go-box"
 	"github.com/mattn/go-colorable"
+	box "github.com/zetamatta/go-box"
 )
 
 func main() {
