@@ -4,14 +4,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"regexp"
 	"strings"
 
 	"github.com/mattn/go-colorable"
-	box "github.com/zetamatta/go-box"
+	"github.com/zetamatta/go-box"
 )
-
-var ansiStrip = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
 func main() {
 	data, err := ioutil.ReadAll(os.Stdin)
@@ -20,7 +17,7 @@ func main() {
 		os.Exit(1)
 		return
 	}
-	data = ansiStrip.ReplaceAll(data,[]byte{})
+	data = box.AnsiCutter.ReplaceAll(data, []byte{})
 	list := strings.Split(string(data), "\n")
 	switch len(list) {
 	case 0:
@@ -33,7 +30,7 @@ func main() {
 		list[i] = strings.TrimSpace(list[i])
 	}
 	console := colorable.NewColorableStderr()
-	result := box.Choice(list,console)
+	result := box.Choice(list, console)
 	fmt.Fprintln(console)
 
 	fmt.Println(result)

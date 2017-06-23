@@ -11,7 +11,7 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
-var ansiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
+var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
 func Print(ctx context.Context, nodes []string, out io.Writer) bool {
 	b := New()
@@ -40,7 +40,7 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 
 	maxLen := 1
 	for _, finfo := range nodes {
-		length := runewidth.StringWidth(ansiCutter.ReplaceAllString(finfo, ""))
+		length := runewidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
 		if length > maxLen {
 			maxLen = length
 		}
@@ -55,7 +55,7 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 	row := 0
 	for _, finfo := range nodes {
 		lines[row] = append(lines[row], finfo...)
-		w := runewidth.StringWidth(ansiCutter.ReplaceAllString(finfo, ""))
+		w := runewidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
 		if maxLen < b.Width {
 			for i := maxLen + 1; i > w; i-- {
 				lines[row] = append(lines[row], ' ')
@@ -85,7 +85,7 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 		if bytes.Compare(lines[i], b.Cache[y]) != 0 {
 			b.Cache[y] = lines[i]
 			fmt.Fprint(out, string(lines[i]))
-			fmt.Fprint(out, "\x1B[0K")
+			fmt.Fprint(out, ERASE_LINE)
 		}
 		y++
 		if ctx != nil {
@@ -109,6 +109,8 @@ const (
 	CURSOR_ON  = "\x1B[?25h"
 	BOLD_ON    = "\x1B[0;47;30m"
 	BOLD_OFF   = "\x1B[0m"
+	UP_N       = "\x1B[%dA"
+	ERASE_LINE = "\x1B[0K"
 
 	K_LEFT  = 0x25
 	K_RIGHT = 0x27
@@ -193,9 +195,9 @@ func Choice(sources []string, out io.Writer) string {
 			}
 		}
 		if h < b.Height {
-			fmt.Fprintf(out, "\x1B[%dA\r", h-1)
+			fmt.Fprintf(out, UP_N+"\r", h-1)
 		} else {
-			fmt.Fprintf(out, "\x1B[%dA\r", b.Height-1)
+			fmt.Fprintf(out, UP_N+"\r", b.Height-1)
 		}
 	}
 }
