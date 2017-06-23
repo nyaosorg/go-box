@@ -1,6 +1,7 @@
 package box
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -28,6 +29,7 @@ func (b *box_t) Print(ctx context.Context,
 
 	// append last linefeed.
 	fmt.Fprintln(out)
+	b.Cache = nil
 	return selected, columns, nlines
 }
 
@@ -71,10 +73,21 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 		}
 	}
 
+	if b.Cache == nil {
+		b.Cache = make([][]byte, b.Height)
+	}
 	i := offset
+	y := 0
 	for {
-		fmt.Fprint(out, string(lines[i]))
-		fmt.Fprint(out, "\x1B[0K")
+		if y >= len(b.Cache) {
+			b.Cache = append(b.Cache, []byte{})
+		}
+		if bytes.Compare(lines[i], b.Cache[y]) != 0 {
+			b.Cache[y] = lines[i]
+			fmt.Fprint(out, string(lines[i]))
+			fmt.Fprint(out, "\x1B[0K")
+		}
+		y++
 		if ctx != nil {
 			select {
 			case <-ctx.Done():

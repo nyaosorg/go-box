@@ -7,6 +7,7 @@ import "github.com/mattn/go-tty"
 type box_t struct {
 	Width  int
 	Height int
+	Cache  [][]byte
 	Tty    *tty.TTY
 }
 

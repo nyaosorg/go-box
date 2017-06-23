@@ -9,6 +9,7 @@ import (
 type box_t struct {
 	Width  int
 	Height int
+	Cache  [][]byte
 }
 
 func New() *box_t {
