@@ -23,6 +23,19 @@ func (b *box_t) Print(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (bool, int, int) {
+
+	selected, columns, nlines := b.PrintNoLastLineFeed(ctx, nodes, offset, out)
+
+	// append last linefeed.
+	fmt.Fprintln(out)
+	return selected, columns, nlines
+}
+
+func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
+	nodes []string,
+	offset int,
+	out io.Writer) (bool, int, int) {
+
 	maxLen := 1
 	for _, finfo := range nodes {
 		length := runewidth.StringWidth(ansiCutter.ReplaceAllString(finfo, ""))
@@ -128,7 +141,7 @@ func Choice(sources []string, out io.Writer) string {
 	offset := 0
 	for {
 		draws[cursor] = BOLD_ON + truncate(nodes[cursor], b.Width-1) + BOLD_OFF
-		status, _, h := b.Print(nil, draws, offset, out)
+		status, _, h := b.PrintNoLastLineFeed(nil, draws, offset, out)
 		if !status {
 			return ""
 		}
