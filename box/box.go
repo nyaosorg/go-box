@@ -11,7 +11,7 @@ import (
 	box "github.com/zetamatta/go-box"
 )
 
-var ansiStrip = regexp.MustCompile("\x1B[^A-Z][A-Z]")
+var ansiStrip = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
 func main() {
 	data, err := ioutil.ReadAll(os.Stdin)
