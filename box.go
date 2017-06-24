@@ -155,12 +155,12 @@ func Choice(sources []string, out io.Writer) string {
 
 	offset := 0
 	for {
-		draws[cursor] = BOLD_ON + truncate(nodes[cursor], b.Width-1) + BOLD_OFF
+		draws[cursor] = BOLD_ON + truncate(nodes[cursor], b.Width-2) + BOLD_OFF
 		status, _, h := b.PrintNoLastLineFeed(nil, draws, offset, out)
 		if !status {
 			return ""
 		}
-		draws[cursor] = truncate(nodes[cursor], b.Width-1)
+		draws[cursor] = truncate(nodes[cursor], b.Width-2)
 		last := cursor
 		for last == cursor {
 			switch b.GetCmd() {
