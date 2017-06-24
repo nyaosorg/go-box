@@ -33,12 +33,22 @@ type console_screen_buffer_info_t struct {
 
 var getConsoleScreenBufferInfo = kernel32.NewProc("GetConsoleScreenBufferInfo")
 
-func GetScreenBufferInfo() *console_screen_buffer_info_t {
+type console_handle_t syscall.Handle
+
+func newHandle(handle syscall.Handle) console_handle_t {
+	return console_handle_t(handle)
+}
+
+func (h console_handle_t) GetScreenBufferInfo() *console_screen_buffer_info_t {
 	var csbi console_screen_buffer_info_t
 	getConsoleScreenBufferInfo.Call(
-		uintptr(hConout),
+		uintptr(h),
 		uintptr(unsafe.Pointer(&csbi)))
 	return &csbi
+}
+
+func GetScreenBufferInfo() *console_screen_buffer_info_t {
+	return console_handle_t(hConout).GetScreenBufferInfo()
 }
 
 func (this *console_screen_buffer_info_t) ViewSize() (int, int) {
