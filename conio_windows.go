@@ -9,7 +9,15 @@ import (
 
 var kernel32 = syscall.NewLazyDLL("kernel32")
 
-var hConout, _ = syscall.GetStdHandle(syscall.STD_ERROR_HANDLE)
+var hConout syscall.Handle
+
+func init() {
+	var err error
+	hConout, err = syscall.Open("CONOUT$", syscall.O_RDWR, 0)
+	if err != nil {
+		panic(err.Error())
+	}
+}
 
 type coord_t struct {
 	X int16
