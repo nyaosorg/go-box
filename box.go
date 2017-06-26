@@ -28,7 +28,9 @@ func (b *box_t) Print(ctx context.Context,
 	selected, columns, nlines := b.PrintNoLastLineFeed(ctx, nodes, offset, out)
 
 	// append last linefeed.
-	fmt.Fprintln(out)
+	if nlines > 0 {
+		fmt.Fprintln(out)
+	}
 	b.Cache = nil
 	return selected, columns, nlines
 }
@@ -37,6 +39,10 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (bool, int, int) {
+
+	if len(nodes) <= 0 {
+		return true, 0, 0
+	}
 
 	maxLen := 1
 	for _, finfo := range nodes {
