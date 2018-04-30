@@ -1,6 +1,7 @@
 package box
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"fmt"
@@ -175,6 +176,9 @@ func Choice(sources []string, out io.Writer) string {
 		draws[cursor] = truncate(nodes[cursor], b.Width-2)
 		last := cursor
 		for last == cursor {
+			if bw, ok := out.(*bufio.Writer); ok {
+				bw.Flush()
+			}
 			switch b.GetCmd() {
 			case LEFT:
 				cursor = (cursor + len(nodes) - h) % len(nodes)
