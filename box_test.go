@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func TestBoxPrint(t *testing.T) {
-	BoxPrint(nil, []string{
+func TestPrint(t *testing.T) {
+	Print(nil, []string{
 		"aaaa", "bbbb", "cccc", "fjdaksljflkdajfkljsalkfjdlkf",
 		"jfkldsjflkjdsalkfjlkdsajflkajds",
 		"fsdfsdf"}, os.Stdout)
