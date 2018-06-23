@@ -12,8 +12,9 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
-var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
+var ansiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
+// Print outputs the list of `nodes` using screen width all
 func Print(ctx context.Context, nodes []string, out io.Writer) bool {
 	b := New()
 	b.Height = 0
@@ -47,7 +48,7 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 
 	maxLen := 1
 	for _, finfo := range nodes {
-		length := runewidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
+		length := runewidth.StringWidth(ansiCutter.ReplaceAllString(finfo, ""))
 		if length > maxLen {
 			maxLen = length
 		}
@@ -62,7 +63,7 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 	row := 0
 	for _, finfo := range nodes {
 		lines[row] = append(lines[row], finfo...)
-		w := runewidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
+		w := runewidth.StringWidth(ansiCutter.ReplaceAllString(finfo, ""))
 		if maxLen < b.Width {
 			for i := maxLen + 1; i > w; i-- {
 				lines[row] = append(lines[row], ' ')
@@ -73,10 +74,10 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 			row = 0
 		}
 	}
-	i_end := len(lines)
+	iEnd := len(lines)
 	if b.Height > 0 {
-		if i_end >= offset+b.Height {
-			i_end = offset + b.Height
+		if iEnd >= offset+b.Height {
+			iEnd = offset + b.Height
 		}
 	}
 
@@ -96,7 +97,7 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 		if bytes.Compare(lines[i], b.Cache[y]) != 0 {
 			fmt.Fprint(out, strings.TrimRight(string(lines[i]), " "))
 			if len(b.Cache[y]) > 0 {
-				fmt.Fprint(out, ERASE_LINE)
+				fmt.Fprint(out, escEraseLine)
 			}
 			b.Cache[y] = lines[i]
 		}
@@ -109,7 +110,7 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 			}
 		}
 		i++
-		if i >= i_end {
+		if i >= iEnd {
 			break
 		}
 		fmt.Fprintln(out)
@@ -118,17 +119,17 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 }
 
 const (
-	CURSOR_OFF = "\x1B[?25l"
-	CURSOR_ON  = "\x1B[?25h"
-	BOLD_ON    = "\x1B[0;47;30m"
-	BOLD_OFF   = "\x1B[0m"
-	UP_N       = "\x1B[%dA"
-	ERASE_LINE = "\x1B[0K"
+	escCursorOff = "\x1B[?25l"
+	escCursorOn  = "\x1B[?25h"
+	escBoldOn    = "\x1B[0;47;30m"
+	escBoldOff   = "\x1B[0m"
+	escUpNChar   = "\x1B[%dA"
+	escEraseLine = "\x1B[0K"
 
-	K_LEFT  = 0x25
-	K_RIGHT = 0x27
-	K_UP    = 0x26
-	K_DOWN  = 0x28
+	keyLeft  = 0x25
+	keyRight = 0x27
+	keyUp    = 0x26
+	keyDown  = 0x28
 )
 
 func truncate(s string, w int) string {
@@ -158,8 +159,8 @@ func Choice(sources []string, out io.Writer) string {
 			draws = append(draws, val)
 		}
 	}
-	io.WriteString(out, CURSOR_OFF)
-	defer io.WriteString(out, CURSOR_ON)
+	io.WriteString(out, escCursorOff)
+	defer io.WriteString(out, escCursorOn)
 
 	if len(nodes) <= 0 {
 		nodes = []string{""}
@@ -168,7 +169,7 @@ func Choice(sources []string, out io.Writer) string {
 
 	offset := 0
 	for {
-		draws[cursor] = BOLD_ON + truncate(nodes[cursor], b.Width-2) + BOLD_OFF
+		draws[cursor] = escBoldOn + truncate(nodes[cursor], b.Width-2) + escBoldOff
 		status, _, h := b.PrintNoLastLineFeed(nil, draws, offset, out)
 		if !status {
 			return ""
@@ -211,9 +212,9 @@ func Choice(sources []string, out io.Writer) string {
 			}
 		}
 		if h < b.Height {
-			fmt.Fprintf(out, UP_N+"\r", h-1)
+			fmt.Fprintf(out, escUpNChar+"\r", h-1)
 		} else {
-			fmt.Fprintf(out, UP_N+"\r", b.Height-1)
+			fmt.Fprintf(out, escUpNChar+"\r", b.Height-1)
 		}
 	}
 }
