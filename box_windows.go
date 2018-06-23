@@ -4,6 +4,7 @@ package box
 
 import (
 	getch "github.com/zetamatta/go-getch"
+	"github.com/zetamatta/go-box/conio"
 )
 
 type box_t struct {
@@ -13,7 +14,7 @@ type box_t struct {
 }
 
 func New() *box_t {
-	w, h := GetScreenBufferInfo().ViewSize()
+	w, h := conio.GetConsoleScreenBufferInfo().ViewSize()
 	return &box_t{
 		Width:  w,
 		Height: h,
