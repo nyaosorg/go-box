@@ -8,6 +8,7 @@ import (
 var conOut Handle
 var conOutOnce sync.Once
 
+// ConOut returns the handle for Console-Output
 func ConOut() Handle {
 	conOutOnce.Do(func() {
 		var err error
