@@ -13,6 +13,7 @@ type box_t struct {
 	Cache  [][]byte
 }
 
+// New is the constructor for box_t
 func New() *box_t {
 	w, h := conio.GetConsoleScreenBufferInfo().ViewSize()
 	return &box_t{
