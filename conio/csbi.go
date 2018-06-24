@@ -27,8 +27,7 @@ func (s smallRectT) Top() int    { return int(s.top) }
 func (s smallRectT) Right() int  { return int(s.right) }
 func (s smallRectT) Bottom() int { return int(s.bottom) }
 
-// ConsoleScreenBufferInfoT is the type for structure contains terminal's information.
-type ConsoleScreenBufferInfoT struct {
+type consoleScreenBufferInfoT struct {
 	Size              coordT
 	CursorPosition    coordT
 	Attributes        uint16
@@ -38,18 +37,15 @@ type ConsoleScreenBufferInfoT struct {
 
 var getConsoleScreenBufferInfo = kernel32.NewProc("GetConsoleScreenBufferInfo")
 
-// GetConsoleScreenBufferInfo returns the latest ConsoleScreenBufferInfoT
-// cursor position, window region.
-func GetConsoleScreenBufferInfo() *ConsoleScreenBufferInfoT {
-	var csbi ConsoleScreenBufferInfoT
+func GetConsoleScreenBufferInfo() *consoleScreenBufferInfoT {
+	var csbi consoleScreenBufferInfoT
 	getConsoleScreenBufferInfo.Call(
 		uintptr(ConOut()),
 		uintptr(unsafe.Pointer(&csbi)))
 	return &csbi
 }
 
-// ViewSize returns window size from ConsoleScreenBufferInfo structure.
-func (csbi *ConsoleScreenBufferInfoT) ViewSize() (int, int) {
+func (csbi *consoleScreenBufferInfoT) ViewSize() (int, int) {
 	return csbi.Window.Right() - csbi.Window.Left() + 1,
 		csbi.Window.Bottom() - csbi.Window.Top() + 1
 }
