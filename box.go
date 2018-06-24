@@ -137,19 +137,12 @@ func truncate(s string, w int) string {
 }
 
 const (
-	// NONE is constant value that means no keys are hit.
-	NONE = 0
-	// LEFT is constant value that means left-arrow key is hit.
-	LEFT = 1
-	// DOWN is constant value that means down-arrow key is hit.
-	DOWN = 2
-	// UP is constant value that means up-arrow key is hit.
-	UP = 3
-	// RIGHT is constant value that means right-arrow key is hit.
+	NONE  = 0
+	LEFT  = 1
+	DOWN  = 2
+	UP    = 3
 	RIGHT = 4
-	// ENTER is constant value that means enter key is hit.
 	ENTER = 5
-	// LEAVE is constant value that means escape key is hit.
 	LEAVE = 6
 )
 
