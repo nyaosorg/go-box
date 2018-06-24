@@ -3,8 +3,8 @@
 package box
 
 import (
-	"github.com/zetamatta/go-box/conio"
 	getch "github.com/zetamatta/go-getch"
+	"github.com/zetamatta/go-box/conio"
 )
 
 type box_t struct {
@@ -42,13 +42,13 @@ func (b *box_t) GetCmd() int {
 	}
 
 	switch k.Scan {
-	case keyLeft:
+	case K_LEFT:
 		return LEFT
-	case keyRight:
+	case K_RIGHT:
 		return RIGHT
-	case keyDown:
+	case K_DOWN:
 		return DOWN
-	case keyUp:
+	case K_UP:
 		return UP
 	}
 	return NONE
