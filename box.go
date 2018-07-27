@@ -145,16 +145,31 @@ const (
 	LEAVE = 6
 )
 
+type nodeT struct {
+	Index int
+	Text  string
+}
+
+// Choice returns selected string
 func Choice(sources []string, out io.Writer) string {
+	n := Choose(sources, out)
+	if n < 0 {
+		return ""
+	}
+	return sources[n]
+}
+
+// Choice returns the index of selected string
+func Choose(sources []string, out io.Writer) int {
 	cursor := 0
-	nodes := make([]string, 0, len(sources))
+	nodes := make([]*nodeT, 0, len(sources))
 	draws := make([]string, 0, len(sources))
 	b := New()
 	defer b.Close()
-	for _, text := range sources {
+	for i, text := range sources {
 		val := truncate(text, b.Width-1)
 		if val != "" {
-			nodes = append(nodes, val)
+			nodes = append(nodes, &nodeT{Index: i, Text: val})
 			draws = append(draws, val)
 		}
 	}
@@ -162,18 +177,18 @@ func Choice(sources []string, out io.Writer) string {
 	defer io.WriteString(out, CURSOR_ON)
 
 	if len(nodes) <= 0 {
-		nodes = []string{""}
+		nodes = []*nodeT{&nodeT{-1, ""}}
 		draws = []string{""}
 	}
 
 	offset := 0
 	for {
-		draws[cursor] = BOLD_ON + truncate(nodes[cursor], b.Width-2) + BOLD_OFF
+		draws[cursor] = BOLD_ON + truncate(nodes[cursor].Text, b.Width-2) + BOLD_OFF
 		status, _, h := b.PrintNoLastLineFeed(nil, draws, offset, out)
 		if !status {
-			return ""
+			return -1
 		}
-		draws[cursor] = truncate(nodes[cursor], b.Width-2)
+		draws[cursor] = truncate(nodes[cursor].Text, b.Width-2)
 		last := cursor
 		for last == cursor {
 			if bw, ok := out.(*bufio.Writer); ok {
@@ -195,9 +210,9 @@ func Choice(sources []string, out io.Writer) string {
 					cursor = len(nodes) - 1
 				}
 			case ENTER:
-				return nodes[cursor]
+				return nodes[cursor].Index
 			case LEAVE:
-				return ""
+				return -1
 			}
 
 			// x := cursor / h
