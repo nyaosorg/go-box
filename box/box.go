@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -9,6 +10,8 @@ import (
 	"github.com/mattn/go-colorable"
 	"github.com/zetamatta/go-box"
 )
+
+var optionIndex = flag.Bool("index", false, "print index as result")
 
 func main1(args []string) error {
 	data, err := ioutil.ReadAll(os.Stdin)
@@ -28,15 +31,20 @@ func main1(args []string) error {
 		list[i] = strings.TrimSpace(list[i])
 	}
 	console := colorable.NewColorableStderr()
-	result := box.Choice(list, console)
+	index := box.Choose(list, console)
 	fmt.Fprintln(console)
 
-	fmt.Println(result)
+	if *optionIndex {
+		fmt.Println(index)
+	} else {
+		fmt.Println(list[index])
+	}
 	return nil
 }
 
 func main() {
-	if err := main1(os.Args[1:]); err != nil {
+	flag.Parse()
+	if err := main1(flag.Args()); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
