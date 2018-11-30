@@ -37,7 +37,11 @@ func main1(args []string) error {
 	if *optionIndex {
 		fmt.Println(index)
 	} else {
-		fmt.Println(list[index])
+		if index >= 0 {
+			fmt.Println(list[index])
+		} else {
+			fmt.Println("canceled")
+		}
 	}
 	return nil
 }
