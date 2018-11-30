@@ -124,11 +124,6 @@ const (
 	BOLD_OFF   = "\x1B[0m"
 	UP_N       = "\x1B[%dA"
 	ERASE_LINE = "\x1B[0K"
-
-	K_LEFT  = 0x25
-	K_RIGHT = 0x27
-	K_UP    = 0x26
-	K_DOWN  = 0x28
 )
 
 func truncate(s string, w int) string {
