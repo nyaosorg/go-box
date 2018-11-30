@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/mattn/go-colorable"
-	"github.com/zetamatta/go-box"
+	"github.com/zetamatta/go-box/v2"
 )
 
 var optionIndex = flag.Bool("index", false, "print index as result")
