@@ -40,6 +40,11 @@ func New() *box_t {
 
 func (b *box_t) getkey() (string, error) {
 	var keys strings.Builder
+	clean, err := b.Tty.Raw()
+	if err != nil {
+		return "", err
+	}
+	defer clean()
 	for {
 		key, err := b.Tty.ReadRune()
 		if err != nil {
