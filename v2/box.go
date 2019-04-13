@@ -221,9 +221,14 @@ func Choose(sources []string, out io.Writer) int {
 			}
 		}
 		if h < b.Height {
-			fmt.Fprintf(out, UP_N+"\r", h-1)
+			if h > 1 {
+				fmt.Fprintf(out, UP_N, h-1)
+			}
 		} else {
-			fmt.Fprintf(out, UP_N+"\r", b.Height-1)
+			if b.Height > 1 {
+				fmt.Fprintf(out, UP_N, b.Height-1)
+			}
 		}
+		fmt.Fprint(out, "\r")
 	}
 }
