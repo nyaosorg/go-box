@@ -70,9 +70,13 @@ func (b *box_t) GetCmd() int {
 		return LEFT
 	case "l", K_CTRL_F, K_RIGHT:
 		return RIGHT
-	case "j", " ", K_CTRL_N, K_DOWN:
+	case "j", K_CTRL_N, K_DOWN:
 		return DOWN
-	case "k", "\b", K_CTRL_P, K_UP:
+	case " ":
+		return SELECT
+	case "\b":
+		return BACKSELECT
+	case "k", K_CTRL_P, K_UP:
 		return UP
 	case "\r", "\n":
 		return ENTER

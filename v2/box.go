@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/mattn/go-runewidth"
@@ -131,13 +132,15 @@ func truncate(s string, w int) string {
 }
 
 const (
-	NONE  = 0
-	LEFT  = 1
-	DOWN  = 2
-	UP    = 3
-	RIGHT = 4
-	ENTER = 5
-	LEAVE = 6
+	NONE       = 0
+	LEFT       = 1
+	DOWN       = 2
+	UP         = 3
+	RIGHT      = 4
+	ENTER      = 5
+	LEAVE      = 6
+	SELECT     = 7
+	BACKSELECT = 8
 )
 
 type nodeT struct {
@@ -155,8 +158,10 @@ func Choice(sources []string, out io.Writer) string {
 }
 
 // Choice returns the index of selected string
-func Choose(sources []string, out io.Writer) int {
+func ChooseMulti(sources []string, out io.Writer) []int {
 	cursor := 0
+	selected := make(map[int]struct{})
+
 	nodes := make([]*nodeT, 0, len(sources))
 	draws := make([]string, 0, len(sources))
 	b := New()
@@ -178,10 +183,16 @@ func Choose(sources []string, out io.Writer) int {
 
 	offset := 0
 	for {
+		for index := range selected {
+			draws[index] = BOLD_ON + truncate(nodes[index].Text, b.Width-2) + BOLD_OFF
+		}
 		draws[cursor] = BOLD_ON + truncate(nodes[cursor].Text, b.Width-2) + BOLD_OFF
 		status, _, h := b.PrintNoLastLineFeed(nil, draws, offset, out)
 		if !status {
-			return -1
+			return []int{}
+		}
+		for index, _ := range selected {
+			draws[index] = truncate(nodes[index].Text, b.Width-2)
 		}
 		draws[cursor] = truncate(nodes[cursor].Text, b.Width-2)
 		last := cursor
@@ -194,6 +205,13 @@ func Choose(sources []string, out io.Writer) int {
 				cursor = (cursor + len(nodes) - h) % len(nodes)
 			case RIGHT:
 				cursor = (cursor + h) % len(nodes)
+			case SELECT:
+				if _, ok := selected[cursor]; ok {
+					delete(selected, cursor)
+				} else {
+					selected[cursor] = struct{}{}
+				}
+				fallthrough
 			case DOWN:
 				cursor++
 				if cursor >= len(nodes) {
@@ -204,10 +222,27 @@ func Choose(sources []string, out io.Writer) int {
 				if cursor < 0 {
 					cursor = len(nodes) - 1
 				}
+			case BACKSELECT:
+				cursor--
+				if cursor < 0 {
+					cursor = len(nodes) - 1
+				}
+				if _, ok := selected[cursor]; ok {
+					delete(selected, cursor)
+				} else {
+					selected[cursor] = struct{}{}
+				}
 			case ENTER:
-				return nodes[cursor].Index
+				selected[cursor] = struct{}{}
+				result := make([]int, 0, len(selected))
+				for index := range selected {
+					result = append(result, index)
+				}
+				sort.Ints(result)
+				return result
+
 			case LEAVE:
-				return -1
+				return []int{}
 			}
 
 			// x := cursor / h
@@ -231,4 +266,12 @@ func Choose(sources []string, out io.Writer) int {
 		}
 		fmt.Fprint(out, "\r")
 	}
+}
+
+func Choose(sources []string, out io.Writer) int {
+	selected := ChooseMulti(sources, out)
+	if selected == nil || len(selected) <= 0 {
+		return -1
+	}
+	return selected[0]
 }

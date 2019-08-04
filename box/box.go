@@ -31,14 +31,20 @@ func main1(args []string) error {
 		list[i] = strings.TrimSpace(list[i])
 	}
 	console := colorable.NewColorableStderr()
-	index := box.Choose(list, console)
+	indexes := box.ChooseMulti(list, console)
 	fmt.Fprintln(console)
 
 	if *optionIndex {
-		fmt.Println(index)
+		if indexes != nil {
+			for _, index := range indexes {
+				fmt.Println(index)
+			}
+		}
 	} else {
-		if index >= 0 {
-			fmt.Println(list[index])
+		if indexes != nil {
+			for _, index := range indexes {
+				fmt.Println(list[index])
+			}
 		} else {
 			fmt.Println("canceled")
 		}
