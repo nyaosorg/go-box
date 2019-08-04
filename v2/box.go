@@ -157,6 +157,15 @@ func Choice(sources []string, out io.Writer) string {
 	return sources[n]
 }
 
+func ChoiceMulti(sources []string, out io.Writer) []string {
+	list := ChooseMulti(sources, out)
+	values := make([]string, 0, len(list))
+	for _, index := range list {
+		values = append(values, sources[index])
+	}
+	return values
+}
+
 // Choice returns the index of selected string
 func ChooseMulti(sources []string, out io.Writer) []int {
 	cursor := 0
