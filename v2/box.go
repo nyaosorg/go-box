@@ -133,15 +133,17 @@ func truncate(s string, w int) string {
 }
 
 const (
-	NONE       = 0
-	LEFT       = 1
-	DOWN       = 2
-	UP         = 3
-	RIGHT      = 4
-	ENTER      = 5
-	LEAVE      = 6
-	SELECT     = 7
-	BACKSELECT = 8
+	NONE         = 0
+	LEFT         = 1
+	DOWN         = 2
+	UP           = 3
+	RIGHT        = 4
+	ENTER        = 5
+	LEAVE        = 6
+	SELECT_DOWN  = 7
+	SELECT_UP    = 8
+	SELECT_LEFT  = 9
+	SELECT_RIGHT = 10
 )
 
 type nodeT struct {
@@ -206,6 +208,15 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 		}
 		draws[cursor] = truncate(nodes[cursor].Text, b.Width-2)
 		last := cursor
+
+		doSelect := func() {
+			if _, ok := selected[cursor]; ok {
+				delete(selected, cursor)
+			} else {
+				selected[cursor] = struct{}{}
+			}
+		}
+
 		for last == cursor {
 			if bw, ok := out.(*bufio.Writer); ok {
 				bw.Flush()
@@ -213,35 +224,24 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 			switch b.GetCmd() {
 			case LEFT:
 				cursor = (cursor + len(nodes) - h) % len(nodes)
+			case SELECT_LEFT:
+				cursor = (cursor + len(nodes) - h) % len(nodes)
+				doSelect()
+			case SELECT_RIGHT:
+				doSelect()
+				fallthrough
 			case RIGHT:
 				cursor = (cursor + h) % len(nodes)
-			case SELECT:
-				if _, ok := selected[cursor]; ok {
-					delete(selected, cursor)
-				} else {
-					selected[cursor] = struct{}{}
-				}
+			case SELECT_DOWN:
+				doSelect()
 				fallthrough
 			case DOWN:
-				cursor++
-				if cursor >= len(nodes) {
-					cursor = 0
-				}
+				cursor = (cursor + 1) % len(nodes)
 			case UP:
-				cursor--
-				if cursor < 0 {
-					cursor = len(nodes) - 1
-				}
-			case BACKSELECT:
-				cursor--
-				if cursor < 0 {
-					cursor = len(nodes) - 1
-				}
-				if _, ok := selected[cursor]; ok {
-					delete(selected, cursor)
-				} else {
-					selected[cursor] = struct{}{}
-				}
+				cursor = (cursor + len(nodes) - 1) % len(nodes)
+			case SELECT_UP:
+				cursor = (cursor + len(nodes) - 1) % len(nodes)
+				doSelect()
 			case ENTER:
 				selected[cursor] = struct{}{}
 				result := make([]int, 0, len(selected))
