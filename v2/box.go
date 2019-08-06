@@ -122,6 +122,7 @@ const (
 	CURSOR_OFF = "\x1B[?25l"
 	CURSOR_ON  = "\x1B[?25h"
 	BOLD_ON    = "\x1B[0;47;30m"
+	BOLD_ON2   = "\x1B[0;1;7m"
 	BOLD_OFF   = "\x1B[0m"
 	UP_N       = "\x1B[%dA"
 	ERASE_LINE = "\x1B[0K"
@@ -195,7 +196,7 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 		for index := range selected {
 			draws[index] = BOLD_ON + truncate(nodes[index].Text, b.Width-2) + BOLD_OFF
 		}
-		draws[cursor] = BOLD_ON + truncate(nodes[cursor].Text, b.Width-2) + BOLD_OFF
+		draws[cursor] = BOLD_ON2 + truncate(nodes[cursor].Text, b.Width-2) + BOLD_OFF
 		status, _, h := b.PrintNoLastLineFeed(nil, draws, offset, out)
 		if !status {
 			return []int{}
