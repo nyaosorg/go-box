@@ -7,15 +7,19 @@ import (
 )
 
 const (
-	K_LEFT   = "\x1B[D"
-	K_UP     = "\x1B[A"
-	K_RIGHT  = "\x1B[C"
-	K_DOWN   = "\x1B[B"
-	K_CTRL_F = "\x06"
-	K_CTRL_B = "\x02"
-	K_CTRL_N = "\x0E"
-	K_CTRL_P = "\x10"
-	K_CTRL_G = "\x07"
+	K_LEFT       = "\x1B[D"
+	K_UP         = "\x1B[A"
+	K_RIGHT      = "\x1B[C"
+	K_DOWN       = "\x1B[B"
+	K_CTRL_F     = "\x06"
+	K_CTRL_B     = "\x02"
+	K_CTRL_N     = "\x0E"
+	K_CTRL_P     = "\x10"
+	K_CTRL_G     = "\x07"
+	K_CTRL_DOWN  = "\x1B[1;5B"
+	K_CTRL_LEFT  = "\x1B[1;5D"
+	K_CTRL_RIGHT = "\x1B[1;5C"
+	K_CTRL_UP    = "\x1B[1;5A"
 )
 
 type box_t struct {
@@ -74,13 +78,13 @@ func (b *box_t) GetCmd() int {
 		return DOWN
 	case "k", K_CTRL_P, K_UP:
 		return UP
-	case " ", "J":
+	case " ", "J", K_CTRL_DOWN:
 		return SELECT_DOWN
-	case "\b", "K":
+	case "\b", "K", K_CTRL_UP:
 		return SELECT_UP
-	case "H":
+	case "H", K_CTRL_LEFT:
 		return SELECT_LEFT
-	case "L":
+	case "L", K_CTRL_RIGHT:
 		return SELECT_RIGHT
 	case "\r", "\n":
 		return ENTER
