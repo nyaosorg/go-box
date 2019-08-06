@@ -42,7 +42,7 @@ func New() *box_t {
 	}
 }
 
-func (b *box_t) getkey() (string, error) {
+func (b *box_t) GetKey() (string, error) {
 	var keys strings.Builder
 	clean, err := b.Tty.Raw()
 	if err != nil {
@@ -62,36 +62,6 @@ func (b *box_t) getkey() (string, error) {
 			return keys.String(), nil
 		}
 	}
-}
-
-func (b *box_t) GetCmd() int {
-	key, err := b.getkey()
-	if err != nil {
-		return NONE
-	}
-	switch key {
-	case "h", K_CTRL_B, K_LEFT:
-		return LEFT
-	case "l", K_CTRL_F, K_RIGHT:
-		return RIGHT
-	case "j", K_CTRL_N, K_DOWN:
-		return DOWN
-	case "k", K_CTRL_P, K_UP:
-		return UP
-	case " ", "J", K_CTRL_DOWN:
-		return SELECT_DOWN
-	case "\b", "K", K_CTRL_UP:
-		return SELECT_UP
-	case "H", K_CTRL_LEFT:
-		return SELECT_LEFT
-	case "L", K_CTRL_RIGHT:
-		return SELECT_RIGHT
-	case "\r", "\n":
-		return ENTER
-	case "\x1B", K_CTRL_G:
-		return LEAVE
-	}
-	return NONE
 }
 
 func (b *box_t) Close() {

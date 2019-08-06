@@ -221,28 +221,32 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 			if bw, ok := out.(*bufio.Writer); ok {
 				bw.Flush()
 			}
-			switch b.GetCmd() {
-			case LEFT:
+			key, err := b.GetKey()
+			if err != nil {
+				continue
+			}
+			switch key {
+			case "h", K_CTRL_B, K_LEFT:
 				cursor = (cursor + len(nodes) - h) % len(nodes)
-			case SELECT_LEFT:
+			case "H", K_CTRL_LEFT:
 				cursor = (cursor + len(nodes) - h) % len(nodes)
 				doSelect()
-			case SELECT_RIGHT:
+			case "L", K_CTRL_RIGHT:
 				doSelect()
 				fallthrough
-			case RIGHT:
+			case "l", K_CTRL_F, K_RIGHT:
 				cursor = (cursor + h) % len(nodes)
-			case SELECT_DOWN:
+			case " ", "J", K_CTRL_DOWN:
 				doSelect()
 				fallthrough
-			case DOWN:
+			case "j", K_CTRL_N, K_DOWN:
 				cursor = (cursor + 1) % len(nodes)
-			case UP:
+			case "k", K_CTRL_P, K_UP:
 				cursor = (cursor + len(nodes) - 1) % len(nodes)
-			case SELECT_UP:
+			case "\b", "K", K_CTRL_UP:
 				cursor = (cursor + len(nodes) - 1) % len(nodes)
 				doSelect()
-			case ENTER:
+			case "\r", "\n":
 				var result []int
 				if len(selected) > 0 {
 					result = make([]int, 0, len(selected))
@@ -254,8 +258,7 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 					result = []int{cursor}
 				}
 				return result
-
-			case LEAVE:
+			case "\x1B", K_CTRL_G:
 				return []int{}
 			}
 
