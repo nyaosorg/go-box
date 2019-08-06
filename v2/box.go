@@ -243,12 +243,16 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 				cursor = (cursor + len(nodes) - 1) % len(nodes)
 				doSelect()
 			case ENTER:
-				selected[cursor] = struct{}{}
-				result := make([]int, 0, len(selected))
-				for index := range selected {
-					result = append(result, index)
+				var result []int
+				if len(selected) > 0 {
+					result = make([]int, 0, len(selected))
+					for index := range selected {
+						result = append(result, index)
+					}
+					sort.Ints(result)
+				} else {
+					result = []int{cursor}
 				}
-				sort.Ints(result)
 				return result
 
 			case LEAVE:
