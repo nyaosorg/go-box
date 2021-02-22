@@ -6,12 +6,22 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"os"
 	"regexp"
 	"sort"
 	"strings"
 
 	"github.com/mattn/go-runewidth"
 )
+
+var wtRuneWidth *runewidth.Condition
+
+func init(){
+	wtRuneWidth = runewidth.NewCondition()
+	if os.Getenv("WT_SESSION") != "" && os.Getenv("WT_PROFILE_ID") != "" {
+		wtRuneWidth.EastAsianWidth = false
+	}
+}
 
 var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
@@ -48,7 +58,7 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 
 	maxLen := 1
 	for _, finfo := range nodes {
-		length := runewidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
+		length := wtRuneWidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
 		if length > maxLen {
 			maxLen = length
 		}
@@ -63,7 +73,7 @@ func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
 	row := 0
 	for _, finfo := range nodes {
 		lines[row] = append(lines[row], finfo...)
-		w := runewidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
+		w := wtRuneWidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
 		if maxLen < b.Width {
 			for i := maxLen + 1; i > w; i-- {
 				lines[row] = append(lines[row], ' ')
@@ -129,7 +139,7 @@ const (
 )
 
 func truncate(s string, w int) string {
-	return runewidth.Truncate(strings.TrimSpace(s), w, "")
+	return wtRuneWidth.Truncate(strings.TrimSpace(s), w, "")
 }
 
 const (
