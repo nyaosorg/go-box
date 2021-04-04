@@ -125,7 +125,9 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 			panic(fmt.Sprintf("len(lines)==%d i==%d", len(lines), i))
 		}
 		if bytes.Compare(lines[i], b.cache[y]) != 0 {
-			fmt.Fprint(out, strings.TrimRight(string(lines[i]), " "))
+			line := strings.TrimRight(string(lines[i]), " ")
+			line = CutReduntantColorChange(line)
+			io.WriteString(out, line)
 			if len(b.cache[y]) > 0 {
 				fmt.Fprint(out, ERASE_LINE)
 			}
