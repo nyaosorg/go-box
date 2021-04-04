@@ -7,13 +7,4 @@ box
 
 <img src="box0.png" />
 
-How To Build
-============
-
-        git clone https://github.com/zetamatta/go-box
-        cd $GOPATH/src/github.com/zetamatta/go-box/v2
-        go get github.com/mattn/go-runewidth
-        go get github.com/mattn/go-tty
-        go build
-        cd box
-        go build
+Please `import "github.com/zetamatta/go-box/v2"`
