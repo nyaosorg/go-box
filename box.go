@@ -27,7 +27,7 @@ var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
 func Print(ctx context.Context, nodes []string, out io.Writer) bool {
 	b := New()
-	b.Height = 0
+	b.height = 0
 	value, _, _ := b.Print(ctx, nodes, 0, out)
 	return value
 }
@@ -43,7 +43,7 @@ func (b *BoxT) Print(ctx context.Context,
 	if nlines > 0 {
 		fmt.Fprintln(out)
 	}
-	b.Cache = nil
+	b.cache = nil
 	return selected, columns, nlines
 }
 
@@ -63,7 +63,7 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 			maxLen = length
 		}
 	}
-	nodePerLine := (b.Width - 1) / (maxLen + 1)
+	nodePerLine := (b.width - 1) / (maxLen + 1)
 	if nodePerLine <= 0 {
 		nodePerLine = 1
 	}
@@ -74,7 +74,7 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 	for _, finfo := range nodes {
 		lines[row] = append(lines[row], finfo...)
 		w := wtRuneWidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
-		if maxLen < b.Width {
+		if maxLen < b.width {
 			for i := maxLen + 1; i > w; i-- {
 				lines[row] = append(lines[row], ' ')
 			}
@@ -85,31 +85,31 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 		}
 	}
 	i_end := len(lines)
-	if b.Height > 0 {
-		if i_end >= offset+b.Height {
-			i_end = offset + b.Height
+	if b.height > 0 {
+		if i_end >= offset+b.height {
+			i_end = offset + b.height
 		}
 	}
 
-	if b.Cache == nil {
-		b.Cache = make([][]byte, b.Height)
+	if b.cache == nil {
+		b.cache = make([][]byte, b.height)
 	}
 	i := offset
 	y := 0
 	for {
-		if y >= len(b.Cache) {
-			b.Cache = append(b.Cache, []byte{})
+		if y >= len(b.cache) {
+			b.cache = append(b.cache, []byte{})
 		}
 		// assertion
 		if i >= len(lines) {
 			panic(fmt.Sprintf("len(lines)==%d i==%d", len(lines), i))
 		}
-		if bytes.Compare(lines[i], b.Cache[y]) != 0 {
+		if bytes.Compare(lines[i], b.cache[y]) != 0 {
 			fmt.Fprint(out, strings.TrimRight(string(lines[i]), " "))
-			if len(b.Cache[y]) > 0 {
+			if len(b.cache[y]) > 0 {
 				fmt.Fprint(out, ERASE_LINE)
 			}
-			b.Cache[y] = lines[i]
+			b.cache[y] = lines[i]
 		}
 		y++
 		if ctx != nil {
@@ -189,7 +189,7 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 	b := New()
 	defer b.Close()
 	for i, text := range sources {
-		val := truncate(text, b.Width-1)
+		val := truncate(text, b.width-1)
 		if val != "" {
 			nodes = append(nodes, &nodeT{Index: i, Text: val})
 			draws = append(draws, val)
@@ -206,17 +206,17 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 	offset := 0
 	for {
 		for index := range selected {
-			draws[index] = BOLD_ON + truncate(nodes[index].Text, b.Width-2) + BOLD_OFF
+			draws[index] = BOLD_ON + truncate(nodes[index].Text, b.width-2) + BOLD_OFF
 		}
-		draws[cursor] = BOLD_ON2 + truncate(nodes[cursor].Text, b.Width-2) + BOLD_OFF
+		draws[cursor] = BOLD_ON2 + truncate(nodes[cursor].Text, b.width-2) + BOLD_OFF
 		status, _, h := b.PrintNoLastLineFeed(nil, draws, offset, out)
 		if !status {
 			return []int{}
 		}
 		for index, _ := range selected {
-			draws[index] = truncate(nodes[index].Text, b.Width-2)
+			draws[index] = truncate(nodes[index].Text, b.width-2)
 		}
-		draws[cursor] = truncate(nodes[cursor].Text, b.Width-2)
+		draws[cursor] = truncate(nodes[cursor].Text, b.width-2)
 		last := cursor
 
 		doSelect := func() {
@@ -277,18 +277,18 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 			if y < offset {
 				offset = y
 				// offset--
-			} else if y >= offset+b.Height {
-				offset = y - b.Height + 1
+			} else if y >= offset+b.height {
+				offset = y - b.height + 1
 				// offset++
 			}
 		}
-		if h < b.Height {
+		if h < b.height {
 			if h > 1 {
 				fmt.Fprintf(out, UP_N, h-1)
 			}
 		} else {
-			if b.Height > 1 {
-				fmt.Fprintf(out, UP_N, b.Height-1)
+			if b.height > 1 {
+				fmt.Fprintf(out, UP_N, b.height-1)
 			}
 		}
 		fmt.Fprint(out, "\r")

@@ -23,10 +23,10 @@ const (
 )
 
 type BoxT struct {
-	Width  int
-	Height int
-	Cache  [][]byte
-	Tty    *tty.TTY
+	width  int
+	height int
+	cache  [][]byte
+	tty    *tty.TTY
 }
 
 func New() *BoxT {
@@ -36,21 +36,21 @@ func New() *BoxT {
 	}
 	w, h, err := tty1.Size()
 	return &BoxT{
-		Width:  w,
-		Height: h,
-		Tty:    tty1,
+		width:  w,
+		height: h,
+		tty:    tty1,
 	}
 }
 
 func (b *BoxT) GetKey() (string, error) {
 	var keys strings.Builder
-	clean, err := b.Tty.Raw()
+	clean, err := b.tty.Raw()
 	if err != nil {
 		return "", err
 	}
 	defer clean()
 	for {
-		key, err := b.Tty.ReadRune()
+		key, err := b.tty.ReadRune()
 		if err != nil {
 			return "", err
 		}
@@ -58,12 +58,12 @@ func (b *BoxT) GetKey() (string, error) {
 			continue
 		}
 		keys.WriteRune(key)
-		if !b.Tty.Buffered() {
+		if !b.tty.Buffered() {
 			return keys.String(), nil
 		}
 	}
 }
 
 func (b *BoxT) Close() {
-	b.Tty.Close()
+	b.tty.Close()
 }
