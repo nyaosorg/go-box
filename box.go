@@ -32,7 +32,7 @@ func Print(ctx context.Context, nodes []string, out io.Writer) bool {
 	return value
 }
 
-func (b *box_t) Print(ctx context.Context,
+func (b *BoxT) Print(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (bool, int, int) {
@@ -47,7 +47,7 @@ func (b *box_t) Print(ctx context.Context,
 	return selected, columns, nlines
 }
 
-func (b *box_t) PrintNoLastLineFeed(ctx context.Context,
+func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (bool, int, int) {

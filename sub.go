@@ -22,27 +22,27 @@ const (
 	K_CTRL_UP    = "\x1B[1;5A"
 )
 
-type box_t struct {
+type BoxT struct {
 	Width  int
 	Height int
 	Cache  [][]byte
 	Tty    *tty.TTY
 }
 
-func New() *box_t {
+func New() *BoxT {
 	tty1, err := tty.Open()
 	if err != nil {
 		panic(err)
 	}
 	w, h, err := tty1.Size()
-	return &box_t{
+	return &BoxT{
 		Width:  w,
 		Height: h,
 		Tty:    tty1,
 	}
 }
 
-func (b *box_t) GetKey() (string, error) {
+func (b *BoxT) GetKey() (string, error) {
 	var keys strings.Builder
 	clean, err := b.Tty.Raw()
 	if err != nil {
@@ -64,6 +64,6 @@ func (b *box_t) GetKey() (string, error) {
 	}
 }
 
-func (b *box_t) Close() {
+func (b *BoxT) Close() {
 	b.Tty.Close()
 }
