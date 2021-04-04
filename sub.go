@@ -42,7 +42,7 @@ func New() *BoxT {
 	}
 }
 
-func (b *BoxT) GetKey() (string, error) {
+func (b *BoxT) getKey() (string, error) {
 	var keys strings.Builder
 	clean, err := b.tty.Raw()
 	if err != nil {
