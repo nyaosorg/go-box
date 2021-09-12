@@ -1,4 +1,4 @@
-module github.com/nyaosorg/go-box
+module github.com/nyaosorg/go-box/v2
 
 go 1.12
 
