@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/zetamatta/go-box/v2"
+	"github.com/nyaosorg/go-box/v2"
 )
 
 func TestPrint(t *testing.T) {
