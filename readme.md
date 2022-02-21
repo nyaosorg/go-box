@@ -7,4 +7,4 @@ box
 
 <img src="box0.png" />
 
-Please `import "github.com/zetamatta/go-box/v2"`
+Please `import "github.com/nyaosorg/go-box/v2"`
