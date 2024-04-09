@@ -1,17 +1,15 @@
-package box_test
+package box
 
 import (
 	"context"
 	"strings"
 	"testing"
-
-	"github.com/nyaosorg/go-box/v2"
 )
 
 func TestPrint(t *testing.T) {
 	var buffer strings.Builder
 
-	box.Print(context.TODO(), []string{
+	Print(context.TODO(), []string{
 		"aaaa", "bbbb", "cccc", "fjdaksljflkdajfkljsalkfjdlkf",
 		"jfkldsjflkjdsalkfjlkdsajflkajds",
 		"fsdfsdf"}, &buffer)
@@ -31,7 +29,7 @@ func TestCutReduntantColorChange(t *testing.T) {
 	source := "\x1B[32;1m....\x1B[32;1m hogehoge"
 	expect := "\x1B[32;1m.... hogehoge"
 
-	actual := box.CutReduntantColorChange(source)
+	actual := cutReduntantColorChange(source)
 	if expect != actual {
 		t.Fatalf("expect `%s` but `%s`", expect, actual)
 	}
@@ -39,7 +37,7 @@ func TestCutReduntantColorChange(t *testing.T) {
 	source = "\x1B[32;1m....\x1B[33;1m hogehoge"
 	expect = source // not change
 
-	actual = box.CutReduntantColorChange(source)
+	actual = cutReduntantColorChange(source)
 	if expect != actual {
 		t.Fatalf("expect `%s` but `%s`", expect, actual)
 	}
@@ -47,7 +45,7 @@ func TestCutReduntantColorChange(t *testing.T) {
 	source = "\x1B[32;1m....\x1B[32;1m....\x1B[32;1m hogehoge"
 	expect = "\x1B[32;1m........ hogehoge"
 
-	actual = box.CutReduntantColorChange(source)
+	actual = cutReduntantColorChange(source)
 	if expect != actual {
 		t.Fatalf("expect `%s` but `%s`", expect, actual)
 	}

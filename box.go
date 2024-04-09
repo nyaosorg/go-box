@@ -16,7 +16,7 @@ import (
 
 var reduntantColorChangePattern = regexp.MustCompile("(\x1B[^m]+m).*?(\x1B[^m]+m)")
 
-func CutReduntantColorChange(s string) string {
+func cutReduntantColorChange(s string) string {
 	for {
 		m := reduntantColorChangePattern.FindStringSubmatchIndex(s)
 		if m == nil || len(m) <= 0 {
@@ -29,7 +29,7 @@ func CutReduntantColorChange(s string) string {
 		if first == second {
 			s = s[:m[4]] + s[m[5]:]
 		} else {
-			return s[:m[4]] + CutReduntantColorChange(s[m[4]:])
+			return s[:m[4]] + cutReduntantColorChange(s[m[4]:])
 		}
 	}
 }
@@ -156,10 +156,10 @@ func (b *BoxT) PrintNoLastLineFeedX(ctx context.Context,
 		}
 		if !bytes.Equal(lines[i], b.cache[y]) {
 			line := strings.TrimRight(string(lines[i]), " ")
-			line = CutReduntantColorChange(line)
+			line = cutReduntantColorChange(line)
 			io.WriteString(out, line)
 			if len(b.cache[y]) > 0 {
-				fmt.Fprint(out, ERASE_LINE)
+				fmt.Fprint(out, _ERASE_LINE)
 			}
 			b.cache[y] = lines[i]
 		}
@@ -179,32 +179,18 @@ func (b *BoxT) PrintNoLastLineFeedX(ctx context.Context,
 }
 
 const (
-	CURSOR_OFF = "\x1B[?25l"
-	CURSOR_ON  = "\x1B[?25h"
-	BOLD_ON    = "\x1B[0;47;30m"
-	BOLD_ON2   = "\x1B[0;1;7m"
-	BOLD_OFF   = "\x1B[0m"
-	UP_N       = "\x1B[%dA"
-	ERASE_LINE = "\x1B[0K"
+	_CURSOR_OFF = "\x1B[?25l"
+	_CURSOR_ON  = "\x1B[?25h"
+	_BOLD_ON    = "\x1B[0;47;30m"
+	_BOLD_ON2   = "\x1B[0;1;7m"
+	_BOLD_OFF   = "\x1B[0m"
+	_UP_N       = "\x1B[%dA"
+	_ERASE_LINE = "\x1B[0K"
 )
 
 func truncate(s string, w int) string {
 	return wtRuneWidth.Truncate(strings.TrimSpace(s), w, "")
 }
-
-const (
-	NONE         = 0
-	LEFT         = 1
-	DOWN         = 2
-	UP           = 3
-	RIGHT        = 4
-	ENTER        = 5
-	LEAVE        = 6
-	SELECT_DOWN  = 7
-	SELECT_UP    = 8
-	SELECT_LEFT  = 9
-	SELECT_RIGHT = 10
-)
 
 type nodeT struct {
 	Index int
@@ -277,8 +263,8 @@ func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
 			draws = append(draws, val)
 		}
 	}
-	io.WriteString(out, CURSOR_OFF)
-	defer io.WriteString(out, CURSOR_ON)
+	io.WriteString(out, _CURSOR_OFF)
+	defer io.WriteString(out, _CURSOR_ON)
 
 	if len(nodes) <= 0 {
 		nodes = []*nodeT{&nodeT{-1, ""}}
@@ -289,9 +275,9 @@ func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
 	offset := 0
 	for {
 		for index := range selected {
-			draws[index] = BOLD_ON + truncate(nodes[index].Text, b.width-2) + BOLD_OFF
+			draws[index] = _BOLD_ON + truncate(nodes[index].Text, b.width-2) + _BOLD_OFF
 		}
-		draws[cursor] = BOLD_ON2 + truncate(nodes[cursor].Text, b.width-2) + BOLD_OFF
+		draws[cursor] = _BOLD_ON2 + truncate(nodes[cursor].Text, b.width-2) + _BOLD_OFF
 		status, _, h := b.PrintNoLastLineFeed(ctx, draws, offset, out)
 		if !status {
 			return []int{}, nil
@@ -319,24 +305,24 @@ func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
 				continue
 			}
 			switch key {
-			case "h", K_CTRL_B, K_LEFT, K_SHIFT_TAB:
+			case "h", _K_CTRL_B, _K_LEFT, _K_SHIFT_TAB:
 				cursor = (cursor + len(nodes) - h) % len(nodes)
-			case "H", K_CTRL_LEFT:
+			case "H", _K_CTRL_LEFT:
 				cursor = (cursor + len(nodes) - h) % len(nodes)
 				doSelect()
-			case "L", K_CTRL_RIGHT:
+			case "L", _K_CTRL_RIGHT:
 				doSelect()
 				fallthrough
-			case "l", K_CTRL_F, K_RIGHT, "\t":
+			case "l", _K_CTRL_F, _K_RIGHT, "\t":
 				cursor = (cursor + h) % len(nodes)
-			case " ", "J", K_CTRL_DOWN:
+			case " ", "J", _K_CTRL_DOWN:
 				doSelect()
 				fallthrough
-			case "j", K_CTRL_N, K_DOWN:
+			case "j", _K_CTRL_N, _K_DOWN:
 				cursor = (cursor + 1) % len(nodes)
-			case "k", K_CTRL_P, K_UP:
+			case "k", _K_CTRL_P, _K_UP:
 				cursor = (cursor + len(nodes) - 1) % len(nodes)
-			case "\b", "K", K_CTRL_UP:
+			case "\b", "K", _K_CTRL_UP:
 				cursor = (cursor + len(nodes) - 1) % len(nodes)
 				doSelect()
 			case "\r", "\n":
@@ -351,7 +337,7 @@ func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
 					result = []int{cursor}
 				}
 				return result, nil
-			case "\x1B", K_CTRL_G:
+			case "\x1B", _K_CTRL_G:
 				return []int{}, nil
 			}
 
@@ -367,11 +353,11 @@ func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
 		}
 		if h < b.height {
 			if h > 1 {
-				fmt.Fprintf(out, UP_N, h-1)
+				fmt.Fprintf(out, _UP_N, h-1)
 			}
 		} else {
 			if b.height > 1 {
-				fmt.Fprintf(out, UP_N, b.height-1)
+				fmt.Fprintf(out, _UP_N, b.height-1)
 			}
 		}
 		fmt.Fprint(out, "\r")

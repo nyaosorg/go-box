@@ -7,20 +7,20 @@ import (
 )
 
 const (
-	K_LEFT       = "\x1B[D"
-	K_UP         = "\x1B[A"
-	K_RIGHT      = "\x1B[C"
-	K_DOWN       = "\x1B[B"
-	K_CTRL_F     = "\x06"
-	K_CTRL_B     = "\x02"
-	K_CTRL_N     = "\x0E"
-	K_CTRL_P     = "\x10"
-	K_CTRL_G     = "\x07"
-	K_CTRL_DOWN  = "\x1B[1;5B"
-	K_CTRL_LEFT  = "\x1B[1;5D"
-	K_CTRL_RIGHT = "\x1B[1;5C"
-	K_CTRL_UP    = "\x1B[1;5A"
-	K_SHIFT_TAB  = "\x1B[Z"
+	_K_LEFT       = "\x1B[D"
+	_K_UP         = "\x1B[A"
+	_K_RIGHT      = "\x1B[C"
+	_K_DOWN       = "\x1B[B"
+	_K_CTRL_F     = "\x06"
+	_K_CTRL_B     = "\x02"
+	_K_CTRL_N     = "\x0E"
+	_K_CTRL_P     = "\x10"
+	_K_CTRL_G     = "\x07"
+	_K_CTRL_DOWN  = "\x1B[1;5B"
+	_K_CTRL_LEFT  = "\x1B[1;5D"
+	_K_CTRL_RIGHT = "\x1B[1;5C"
+	_K_CTRL_UP    = "\x1B[1;5A"
+	_K_SHIFT_TAB  = "\x1B[Z"
 )
 
 type BoxT struct {
