@@ -30,14 +30,6 @@ type BoxT struct {
 	tty    *tty.TTY
 }
 
-func New() *BoxT {
-	val, err := NewBox()
-	if err != nil {
-		panic(err.Error())
-	}
-	return val
-}
-
 func NewBox() (*BoxT, error) {
 	tty1, err := tty.Open()
 	if err != nil {

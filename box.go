@@ -45,10 +45,6 @@ func init() {
 
 var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
-func Print(ctx context.Context, nodes []string, out io.Writer) bool {
-	return PrintX(ctx, nodes, out) == nil
-}
-
 func PrintX(ctx context.Context, nodes []string, out io.Writer) error {
 	b, err := NewBox()
 	if err != nil {
@@ -57,15 +53,6 @@ func PrintX(ctx context.Context, nodes []string, out io.Writer) error {
 	b.height = 0
 	_, _, err = b.PrintX(ctx, nodes, 0, out)
 	return err
-}
-
-func (b *BoxT) Print(ctx context.Context,
-	nodes []string,
-	offset int,
-	out io.Writer) (bool, int, int) {
-
-	columns, nlines, err := b.PrintX(ctx, nodes, offset, out)
-	return err == nil, columns, nlines
 }
 
 func (b *BoxT) PrintX(ctx context.Context,
@@ -83,18 +70,6 @@ func (b *BoxT) PrintX(ctx context.Context,
 	}
 	b.cache = nil
 	return columns, nlines, nil
-}
-
-func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
-	nodes []string,
-	offset int,
-	out io.Writer) (bool, int, int) {
-
-	if ctx == nil {
-		ctx = context.TODO()
-	}
-	col, row, err := b.PrintNoLastLineFeedX(ctx, nodes, offset, out)
-	return err == nil, col, row
 }
 
 func (b *BoxT) PrintNoLastLineFeedX(ctx context.Context,
@@ -197,14 +172,6 @@ type nodeT struct {
 	Text  string
 }
 
-// Choice returns selected string
-func Choice(sources []string, out io.Writer) string {
-	val, err := ChoiceX(sources, out)
-	if err != nil {
-		panic(err.Error())
-	}
-	return val
-}
 func ChoiceX(sources []string, out io.Writer) (string, error) {
 	n, err := ChooseX(sources, out)
 	if err != nil {
@@ -214,14 +181,6 @@ func ChoiceX(sources []string, out io.Writer) (string, error) {
 		return "", nil
 	}
 	return sources[n], nil
-}
-
-func ChoiceMulti(sources []string, out io.Writer) []string {
-	val, err := ChoiceMultiX(sources, out)
-	if err != nil {
-		panic(err.Error())
-	}
-	return val
 }
 
 func ChoiceMultiX(sources []string, out io.Writer) ([]string, error) {
@@ -234,15 +193,6 @@ func ChoiceMultiX(sources []string, out io.Writer) ([]string, error) {
 		values = append(values, sources[index])
 	}
 	return values, nil
-}
-
-// Choice returns the index of selected string
-func ChooseMulti(sources []string, out io.Writer) []int {
-	val, err := ChooseMultiX(sources, out)
-	if err != nil {
-		panic(err.Error())
-	}
-	return val
 }
 
 func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
@@ -364,13 +314,6 @@ func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
 	}
 }
 
-func Choose(sources []string, out io.Writer) int {
-	val, err := ChooseX(sources, out)
-	if err != nil {
-		panic(err.Error())
-	}
-	return val
-}
 func ChooseX(sources []string, out io.Writer) (int, error) {
 	selected, err := ChooseMultiX(sources, out)
 	if err != nil {
