@@ -35,7 +35,7 @@ func New() *BoxT {
 	if err != nil {
 		panic(err)
 	}
-	w, h, err := tty1.Size()
+	w, h, _ := tty1.Size()
 	return &BoxT{
 		width:  w,
 		height: h,

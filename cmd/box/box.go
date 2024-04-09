@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"strings"
 
@@ -14,7 +14,7 @@ import (
 var optionIndex = flag.Bool("index", false, "print index as result")
 
 func main1(args []string) error {
-	data, err := ioutil.ReadAll(os.Stdin)
+	data, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		return err
 	}
@@ -35,10 +35,8 @@ func main1(args []string) error {
 	fmt.Fprintln(console)
 
 	if *optionIndex {
-		if indexes != nil {
-			for _, index := range indexes {
-				fmt.Println(index)
-			}
+		for _, index := range indexes {
+			fmt.Println(index)
 		}
 	} else {
 		if indexes != nil {

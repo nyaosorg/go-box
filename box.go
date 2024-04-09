@@ -124,7 +124,7 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 		if i >= len(lines) {
 			panic(fmt.Sprintf("len(lines)==%d i==%d", len(lines), i))
 		}
-		if bytes.Compare(lines[i], b.cache[y]) != 0 {
+		if !bytes.Equal(lines[i], b.cache[y]) {
 			line := strings.TrimRight(string(lines[i]), " ")
 			line = CutReduntantColorChange(line)
 			io.WriteString(out, line)
@@ -225,17 +225,18 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 		draws = []string{""}
 	}
 
+	ctx := context.TODO()
 	offset := 0
 	for {
 		for index := range selected {
 			draws[index] = BOLD_ON + truncate(nodes[index].Text, b.width-2) + BOLD_OFF
 		}
 		draws[cursor] = BOLD_ON2 + truncate(nodes[cursor].Text, b.width-2) + BOLD_OFF
-		status, _, h := b.PrintNoLastLineFeed(nil, draws, offset, out)
+		status, _, h := b.PrintNoLastLineFeed(ctx, draws, offset, out)
 		if !status {
 			return []int{}
 		}
-		for index, _ := range selected {
+		for index := range selected {
 			draws[index] = truncate(nodes[index].Text, b.width-2)
 		}
 		draws[cursor] = truncate(nodes[cursor].Text, b.width-2)
