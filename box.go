@@ -266,7 +266,7 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 			case "L", K_CTRL_RIGHT:
 				doSelect()
 				fallthrough
-			case "l", K_CTRL_F, K_RIGHT:
+			case "l", K_CTRL_F, K_RIGHT, "\t":
 				cursor = (cursor + h) % len(nodes)
 			case " ", "J", K_CTRL_DOWN:
 				doSelect()
