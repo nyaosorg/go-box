@@ -31,16 +31,24 @@ type BoxT struct {
 }
 
 func New() *BoxT {
+	val, err := NewBox()
+	if err != nil {
+		panic(err.Error())
+	}
+	return val
+}
+
+func NewBox() (*BoxT, error) {
 	tty1, err := tty.Open()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	w, h, _ := tty1.Size()
+	w, h, err := tty1.Size()
 	return &BoxT{
 		width:  w,
 		height: h,
 		tty:    tty1,
-	}
+	}, err
 }
 
 func (b *BoxT) getKey() (string, error) {

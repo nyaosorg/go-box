@@ -46,10 +46,17 @@ func init() {
 var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
 func Print(ctx context.Context, nodes []string, out io.Writer) bool {
-	b := New()
+	return PrintX(ctx, nodes, out) == nil
+}
+
+func PrintX(ctx context.Context, nodes []string, out io.Writer) error {
+	b, err := NewBox()
+	if err != nil {
+		return err
+	}
 	b.height = 0
-	value, _, _ := b.Print(ctx, nodes, 0, out)
-	return value
+	_, _, err = b.PrintX(ctx, nodes, 0, out)
+	return err
 }
 
 func (b *BoxT) Print(ctx context.Context,
@@ -57,14 +64,25 @@ func (b *BoxT) Print(ctx context.Context,
 	offset int,
 	out io.Writer) (bool, int, int) {
 
-	selected, columns, nlines := b.PrintNoLastLineFeed(ctx, nodes, offset, out)
+	columns, nlines, err := b.PrintX(ctx, nodes, offset, out)
+	return err == nil, columns, nlines
+}
 
+func (b *BoxT) PrintX(ctx context.Context,
+	nodes []string,
+	offset int,
+	out io.Writer) (int, int, error) {
+
+	columns, nlines, err := b.PrintNoLastLineFeedX(ctx, nodes, offset, out)
+	if err != nil {
+		return columns, nlines, err
+	}
 	// append last linefeed.
 	if nlines > 0 {
 		fmt.Fprintln(out)
 	}
 	b.cache = nil
-	return selected, columns, nlines
+	return columns, nlines, nil
 }
 
 func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
@@ -72,8 +90,20 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 	offset int,
 	out io.Writer) (bool, int, int) {
 
+	if ctx == nil {
+		ctx = context.TODO()
+	}
+	col, row, err := b.PrintNoLastLineFeedX(ctx, nodes, offset, out)
+	return err == nil, col, row
+}
+
+func (b *BoxT) PrintNoLastLineFeedX(ctx context.Context,
+	nodes []string,
+	offset int,
+	out io.Writer) (int, int, error) {
+
 	if len(nodes) <= 0 {
-		return true, 0, 0
+		return 0, 0, nil
 	}
 
 	maxLen := 1
@@ -122,7 +152,7 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 		}
 		// assertion
 		if i >= len(lines) {
-			panic(fmt.Sprintf("len(lines)==%d i==%d", len(lines), i))
+			return 0, 0, fmt.Errorf("assertion failed: len(lines)==%d i==%d", len(lines), i)
 		}
 		if !bytes.Equal(lines[i], b.cache[y]) {
 			line := strings.TrimRight(string(lines[i]), " ")
@@ -134,12 +164,10 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 			b.cache[y] = lines[i]
 		}
 		y++
-		if ctx != nil {
-			select {
-			case <-ctx.Done():
-				return false, nodePerLine, nlines
-			default:
-			}
+		select {
+		case <-ctx.Done():
+			return nodePerLine, nlines, ctx.Err()
+		default:
 		}
 		i++
 		if i >= i_end {
@@ -147,7 +175,7 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 		}
 		fmt.Fprintln(out)
 	}
-	return true, nodePerLine, nlines
+	return nodePerLine, nlines, nil
 }
 
 const (
@@ -185,30 +213,62 @@ type nodeT struct {
 
 // Choice returns selected string
 func Choice(sources []string, out io.Writer) string {
-	n := Choose(sources, out)
-	if n < 0 {
-		return ""
+	val, err := ChoiceX(sources, out)
+	if err != nil {
+		panic(err.Error())
 	}
-	return sources[n]
+	return val
+}
+func ChoiceX(sources []string, out io.Writer) (string, error) {
+	n, err := ChooseX(sources, out)
+	if err != nil {
+		return "", err
+	}
+	if n < 0 {
+		return "", nil
+	}
+	return sources[n], nil
 }
 
 func ChoiceMulti(sources []string, out io.Writer) []string {
-	list := ChooseMulti(sources, out)
+	val, err := ChoiceMultiX(sources, out)
+	if err != nil {
+		panic(err.Error())
+	}
+	return val
+}
+
+func ChoiceMultiX(sources []string, out io.Writer) ([]string, error) {
+	list, err := ChooseMultiX(sources, out)
+	if err != nil {
+		return nil, err
+	}
 	values := make([]string, 0, len(list))
 	for _, index := range list {
 		values = append(values, sources[index])
 	}
-	return values
+	return values, nil
 }
 
 // Choice returns the index of selected string
 func ChooseMulti(sources []string, out io.Writer) []int {
+	val, err := ChooseMultiX(sources, out)
+	if err != nil {
+		panic(err.Error())
+	}
+	return val
+}
+
+func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
 	cursor := 0
 	selected := make(map[int]struct{})
 
 	nodes := make([]*nodeT, 0, len(sources))
 	draws := make([]string, 0, len(sources))
-	b := New()
+	b, err := NewBox()
+	if err != nil {
+		return nil, err
+	}
 	defer b.Close()
 	for i, text := range sources {
 		val := truncate(text, b.width-1)
@@ -234,7 +294,7 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 		draws[cursor] = BOLD_ON2 + truncate(nodes[cursor].Text, b.width-2) + BOLD_OFF
 		status, _, h := b.PrintNoLastLineFeed(ctx, draws, offset, out)
 		if !status {
-			return []int{}
+			return []int{}, nil
 		}
 		for index := range selected {
 			draws[index] = truncate(nodes[index].Text, b.width-2)
@@ -290,9 +350,9 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 				} else {
 					result = []int{cursor}
 				}
-				return result
+				return result, nil
 			case "\x1B", K_CTRL_G:
-				return []int{}
+				return []int{}, nil
 			}
 
 			// x := cursor / h
@@ -319,9 +379,19 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 }
 
 func Choose(sources []string, out io.Writer) int {
-	selected := ChooseMulti(sources, out)
-	if selected == nil || len(selected) <= 0 {
-		return -1
+	val, err := ChooseX(sources, out)
+	if err != nil {
+		panic(err.Error())
 	}
-	return selected[0]
+	return val
+}
+func ChooseX(sources []string, out io.Writer) (int, error) {
+	selected, err := ChooseMultiX(sources, out)
+	if err != nil {
+		return -1, err
+	}
+	if selected == nil || len(selected) <= 0 {
+		return -1, nil
+	}
+	return selected[0], nil
 }

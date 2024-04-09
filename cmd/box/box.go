@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -13,7 +14,7 @@ import (
 
 var optionIndex = flag.Bool("index", false, "print index as result")
 
-func main1(args []string) error {
+func mains(args []string) error {
 	data, err := io.ReadAll(os.Stdin)
 	if err != nil {
 		return err
@@ -31,7 +32,10 @@ func main1(args []string) error {
 		list[i] = strings.TrimSpace(list[i])
 	}
 	console := colorable.NewColorableStderr()
-	indexes := box.ChooseMulti(list, console)
+	indexes, err := box.ChooseMultiX(list, console)
+	if err != nil {
+		return err
+	}
 	fmt.Fprintln(console)
 
 	if *optionIndex {
@@ -39,12 +43,11 @@ func main1(args []string) error {
 			fmt.Println(index)
 		}
 	} else {
-		if indexes != nil {
-			for _, index := range indexes {
-				fmt.Println(list[index])
-			}
-		} else {
-			fmt.Println("canceled")
+		if indexes == nil {
+			return errors.New("canceled")
+		}
+		for _, index := range indexes {
+			fmt.Println(list[index])
 		}
 	}
 	return nil
@@ -52,9 +55,8 @@ func main1(args []string) error {
 
 func main() {
 	flag.Parse()
-	if err := main1(flag.Args()); err != nil {
+	if err := mains(flag.Args()); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-	os.Exit(0)
 }
