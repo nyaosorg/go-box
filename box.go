@@ -258,7 +258,7 @@ func ChooseMulti(sources []string, out io.Writer) []int {
 				continue
 			}
 			switch key {
-			case "h", K_CTRL_B, K_LEFT:
+			case "h", K_CTRL_B, K_LEFT, K_SHIFT_TAB:
 				cursor = (cursor + len(nodes) - h) % len(nodes)
 			case "H", K_CTRL_LEFT:
 				cursor = (cursor + len(nodes) - h) % len(nodes)

@@ -20,6 +20,7 @@ const (
 	K_CTRL_LEFT  = "\x1B[1;5D"
 	K_CTRL_RIGHT = "\x1B[1;5C"
 	K_CTRL_UP    = "\x1B[1;5A"
+	K_SHIFT_TAB  = "\x1B[Z"
 )
 
 type BoxT struct {
