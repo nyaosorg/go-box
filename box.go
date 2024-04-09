@@ -43,7 +43,7 @@ func init() {
 	}
 }
 
-var ansiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
+var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
 func Print(ctx context.Context, nodes []string, out io.Writer) bool {
 	b := New()
@@ -78,7 +78,7 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 
 	maxLen := 1
 	for _, finfo := range nodes {
-		length := wtRuneWidth.StringWidth(ansiCutter.ReplaceAllString(finfo, ""))
+		length := wtRuneWidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
 		if length > maxLen {
 			maxLen = length
 		}
@@ -93,7 +93,7 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 	row := 0
 	for _, finfo := range nodes {
 		lines[row] = append(lines[row], finfo...)
-		w := wtRuneWidth.StringWidth(ansiCutter.ReplaceAllString(finfo, ""))
+		w := wtRuneWidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
 		if maxLen < b.width {
 			for i := maxLen + 1; i > w; i-- {
 				lines[row] = append(lines[row], ' ')
