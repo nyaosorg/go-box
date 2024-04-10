@@ -5,7 +5,9 @@ import (
 	"io"
 )
 
-func New() *BoxT {
+type BoxT = Box
+
+func New() *Box {
 	val, err := NewBox()
 	if err != nil {
 		panic(err.Error())
@@ -17,7 +19,7 @@ func Print(ctx context.Context, nodes []string, out io.Writer) bool {
 	return PrintX(ctx, nodes, out) == nil
 }
 
-func (b *BoxT) Print(ctx context.Context,
+func (b *Box) Print(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (bool, int, int) {
@@ -26,7 +28,7 @@ func (b *BoxT) Print(ctx context.Context,
 	return err == nil, columns, nlines
 }
 
-func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
+func (b *Box) PrintNoLastLineFeed(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (bool, int, int) {
@@ -38,36 +40,44 @@ func (b *BoxT) PrintNoLastLineFeed(ctx context.Context,
 	return err == nil, col, row
 }
 
-// Choice returns selected string
+// Deprecated: Choice returns returns the string that user selected.
 func Choice(sources []string, out io.Writer) string {
-	val, err := ChoiceX(sources, out)
+	val, err := SelectString(sources, false, out)
 	if err != nil {
 		panic(err.Error())
 	}
-	return val
+	if len(val) <= 0 {
+		return ""
+	}
+	return val[0]
 }
 
+// Deprecated: ChoiceMulti returns the strings that user selected.
 func ChoiceMulti(sources []string, out io.Writer) []string {
-	val, err := ChoiceMultiX(sources, out)
+	val, err := SelectString(sources, true, out)
 	if err != nil {
 		panic(err.Error())
 	}
 	return val
 }
 
-// Choice returns the index of selected string
+// Deperecated: Choose Multi returns the indices that user selected.
 func ChooseMulti(sources []string, out io.Writer) []int {
-	val, err := ChooseMultiX(sources, out)
+	val, err := SelectIndex(sources, true, out)
 	if err != nil {
 		panic(err.Error())
 	}
 	return val
 }
 
+// Deprecated: Choose returns the index that user selected
 func Choose(sources []string, out io.Writer) int {
-	val, err := ChooseX(sources, out)
+	val, err := SelectIndex(sources, false, out)
 	if err != nil {
 		panic(err.Error())
 	}
-	return val
+	if len(val) <= 0 {
+		return -1
+	}
+	return val[0]
 }

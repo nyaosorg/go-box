@@ -12,6 +12,8 @@ import (
 	"strings"
 
 	"github.com/mattn/go-runewidth"
+
+	"github.com/nyaosorg/go-box/v2/internal/lazy"
 )
 
 var reduntantColorChangePattern = regexp.MustCompile("(\x1B[^m]+m).*?(\x1B[^m]+m)")
@@ -34,13 +36,14 @@ func cutReduntantColorChange(s string) string {
 	}
 }
 
-var wtRuneWidth *runewidth.Condition
-
-func init() {
-	wtRuneWidth = runewidth.NewCondition()
-	if os.Getenv("WT_SESSION") != "" && os.Getenv("WT_PROFILE_ID") != "" {
-		wtRuneWidth.EastAsianWidth = false
-	}
+var wtRuneWidth = lazy.Of[*runewidth.Condition]{
+	New: func() *runewidth.Condition {
+		c := runewidth.NewCondition()
+		if os.Getenv("WT_SESSION") != "" && os.Getenv("WT_PROFILE_ID") != "" {
+			c.EastAsianWidth = false
+		}
+		return c
+	},
 }
 
 var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
@@ -55,7 +58,7 @@ func PrintX(ctx context.Context, nodes []string, out io.Writer) error {
 	return err
 }
 
-func (b *BoxT) PrintX(ctx context.Context,
+func (b *Box) PrintX(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (int, int, error) {
@@ -72,7 +75,7 @@ func (b *BoxT) PrintX(ctx context.Context,
 	return columns, nlines, nil
 }
 
-func (b *BoxT) PrintNoLastLineFeedX(ctx context.Context,
+func (b *Box) PrintNoLastLineFeedX(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (int, int, error) {
@@ -81,9 +84,10 @@ func (b *BoxT) PrintNoLastLineFeedX(ctx context.Context,
 		return 0, 0, nil
 	}
 
+	rw := wtRuneWidth.Value()
 	maxLen := 1
 	for _, finfo := range nodes {
-		length := wtRuneWidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
+		length := rw.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
 		if length > maxLen {
 			maxLen = length
 		}
@@ -98,7 +102,7 @@ func (b *BoxT) PrintNoLastLineFeedX(ctx context.Context,
 	row := 0
 	for _, finfo := range nodes {
 		lines[row] = append(lines[row], finfo...)
-		w := wtRuneWidth.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
+		w := rw.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
 		if maxLen < b.width {
 			for i := maxLen + 1; i > w; i-- {
 				lines[row] = append(lines[row], ' ')
@@ -164,7 +168,7 @@ const (
 )
 
 func truncate(s string, w int) string {
-	return wtRuneWidth.Truncate(strings.TrimSpace(s), w, "")
+	return wtRuneWidth.Value().Truncate(strings.TrimSpace(s), w, "")
 }
 
 type nodeT struct {
@@ -172,44 +176,16 @@ type nodeT struct {
 	Text  string
 }
 
-func ChoiceX(sources []string, out io.Writer) (string, error) {
-	n, err := ChooseX(sources, out)
-	if err != nil {
-		return "", err
-	}
-	if n < 0 {
-		return "", nil
-	}
-	return sources[n], nil
-}
-
-func ChoiceMultiX(sources []string, out io.Writer) ([]string, error) {
-	list, err := ChooseMultiX(sources, out)
-	if err != nil {
-		return nil, err
-	}
-	values := make([]string, 0, len(list))
-	for _, index := range list {
-		values = append(values, sources[index])
-	}
-	return values, nil
-}
-
-func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
+func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, error) {
 	cursor := 0
 	selected := make(map[int]struct{})
 
-	nodes := make([]*nodeT, 0, len(sources))
+	nodes := make([]nodeT, 0, len(sources))
 	draws := make([]string, 0, len(sources))
-	b, err := NewBox()
-	if err != nil {
-		return nil, err
-	}
-	defer b.Close()
 	for i, text := range sources {
 		val := truncate(text, b.width-1)
 		if val != "" {
-			nodes = append(nodes, &nodeT{Index: i, Text: val})
+			nodes = append(nodes, nodeT{Index: i, Text: val})
 			draws = append(draws, val)
 		}
 	}
@@ -217,7 +193,7 @@ func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
 	defer io.WriteString(out, _CURSOR_ON)
 
 	if len(nodes) <= 0 {
-		nodes = []*nodeT{&nodeT{-1, ""}}
+		nodes = []nodeT{nodeT{-1, ""}}
 		draws = []string{""}
 	}
 
@@ -238,19 +214,24 @@ func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
 		draws[cursor] = truncate(nodes[cursor].Text, b.width-2)
 		last := cursor
 
-		doSelect := func() {
-			if _, ok := selected[cursor]; ok {
-				delete(selected, cursor)
-			} else {
-				selected[cursor] = struct{}{}
+		var doSelect func()
+		if multi {
+			doSelect = func() {
+				if _, ok := selected[cursor]; ok {
+					delete(selected, cursor)
+				} else {
+					selected[cursor] = struct{}{}
+				}
 			}
+		} else {
+			doSelect = func() {}
 		}
 
 		for last == cursor {
 			if bw, ok := out.(*bufio.Writer); ok {
 				bw.Flush()
 			}
-			key, err := b.getKey()
+			key, err := b.tty.GetKey()
 			if err != nil {
 				continue
 			}
@@ -314,13 +295,34 @@ func ChooseMultiX(sources []string, out io.Writer) ([]int, error) {
 	}
 }
 
-func ChooseX(sources []string, out io.Writer) (int, error) {
-	selected, err := ChooseMultiX(sources, out)
+func (b *Box) SelectString(sources []string, multi bool, out io.Writer) ([]string, error) {
+	list, err := SelectIndex(sources, multi, out)
 	if err != nil {
-		return -1, err
+		return nil, err
 	}
-	if selected == nil || len(selected) <= 0 {
-		return -1, nil
+	values := make([]string, 0, len(list))
+	for _, index := range list {
+		values = append(values, sources[index])
 	}
-	return selected[0], nil
+	return values, nil
+}
+
+// SelectIndex returns the indexes that user selected.
+func SelectIndex(sources []string, multi bool, out io.Writer) ([]int, error) {
+	b, err := NewBox()
+	if err != nil {
+		return nil, err
+	}
+	r, err := b.SelectIndex(sources, multi, out)
+	b.Close()
+	return r, err
+}
+
+// SelectString returns the strings that user selected.
+func SelectString(sources []string, multi bool, out io.Writer) ([]string, error) {
+	b, err := NewBox()
+	if err != nil {
+		return nil, err
+	}
+	return b.SelectString(sources, multi, out)
 }

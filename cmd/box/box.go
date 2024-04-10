@@ -12,7 +12,10 @@ import (
 	"github.com/nyaosorg/go-box/v2"
 )
 
-var optionIndex = flag.Bool("index", false, "print index as result")
+var (
+	optionIndex  = flag.Bool("index", false, "print index as result")
+	optionSingle = flag.Bool("single", false, "select single")
+)
 
 func mains(args []string) error {
 	data, err := io.ReadAll(os.Stdin)
@@ -32,7 +35,7 @@ func mains(args []string) error {
 		list[i] = strings.TrimSpace(list[i])
 	}
 	console := colorable.NewColorableStderr()
-	indexes, err := box.ChooseMultiX(list, console)
+	indexes, err := box.SelectIndex(list, !*optionSingle, console)
 	if err != nil {
 		return err
 	}

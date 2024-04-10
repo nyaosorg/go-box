@@ -23,35 +23,44 @@ const (
 	_K_SHIFT_TAB  = "\x1B[Z"
 )
 
-type BoxT struct {
+type _Tty interface {
+	GetKey() (string, error)
+	Close() error
+}
+
+type Box struct {
 	width  int
 	height int
 	cache  [][]byte
-	tty    *tty.TTY
+	tty    _Tty
 }
 
-func NewBox() (*BoxT, error) {
+func NewBox() (*Box, error) {
 	tty1, err := tty.Open()
 	if err != nil {
 		return nil, err
 	}
 	w, h, err := tty1.Size()
-	return &BoxT{
+	return &Box{
 		width:  w,
 		height: h,
-		tty:    tty1,
+		tty:    GoTty{TTY: tty1},
 	}, err
 }
 
-func (b *BoxT) getKey() (string, error) {
+type GoTty struct {
+	*tty.TTY
+}
+
+func (g GoTty) GetKey() (string, error) {
 	var keys strings.Builder
-	clean, err := b.tty.Raw()
+	clean, err := g.TTY.Raw()
 	if err != nil {
 		return "", err
 	}
 	defer clean()
 	for {
-		key, err := b.tty.ReadRune()
+		key, err := g.TTY.ReadRune()
 		if err != nil {
 			return "", err
 		}
@@ -59,12 +68,12 @@ func (b *BoxT) getKey() (string, error) {
 			continue
 		}
 		keys.WriteRune(key)
-		if !b.tty.Buffered() {
+		if !g.TTY.Buffered() {
 			return keys.String(), nil
 		}
 	}
 }
 
-func (b *BoxT) Close() {
-	b.tty.Close()
+func (b *Box) Close() error {
+	return b.tty.Close()
 }
