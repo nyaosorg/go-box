@@ -10,6 +10,29 @@ box - Executable
 
 ![demo](./demo.gif)
 
+### Install
+
+Download the binary package from [Releases](https://github.com/nyaosorg/go-box/releases) and extract the executable.
+
+#### Use "go install"
+
+```
+go install github.com/nyaosorg/go-box/v2/cmd/box@latest
+```
+
+#### Use "scoop-installer"
+
+```
+scoop install https://raw.githubusercontent.com/nyaosorg/go-box/master/box.json
+```
+
+or
+
+```
+scoop bucket add hymkor https://github.com/hymkor/scoop-bucket
+scoop install box
+```
+
 go-box - golang package
 -----------------------
 
