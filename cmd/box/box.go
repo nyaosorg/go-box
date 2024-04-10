@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/mattn/go-colorable"
@@ -56,7 +57,20 @@ func mains(args []string) error {
 	return nil
 }
 
+var version string
+
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(),
+			"%s %s-%s-%s by %s\n",
+			os.Args[0],
+			version,
+			runtime.GOOS,
+			runtime.GOARCH,
+			runtime.Version())
+		flag.PrintDefaults()
+	}
+
 	flag.Parse()
 	if err := mains(flag.Args()); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
