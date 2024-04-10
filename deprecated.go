@@ -5,8 +5,10 @@ import (
 	"io"
 )
 
+// Deprecated:
 type BoxT = Box
 
+// Deprecated:
 func New() *Box {
 	val, err := NewBox()
 	if err != nil {
@@ -15,10 +17,12 @@ func New() *Box {
 	return val
 }
 
+// Deprecated:
 func Print(ctx context.Context, nodes []string, out io.Writer) bool {
 	return PrintX(ctx, nodes, out) == nil
 }
 
+// Deprecated:
 func (b *Box) Print(ctx context.Context,
 	nodes []string,
 	offset int,
@@ -28,6 +32,7 @@ func (b *Box) Print(ctx context.Context,
 	return err == nil, columns, nlines
 }
 
+// Deprecated:
 func (b *Box) PrintNoLastLineFeed(ctx context.Context,
 	nodes []string,
 	offset int,
@@ -61,7 +66,7 @@ func ChoiceMulti(sources []string, out io.Writer) []string {
 	return val
 }
 
-// Deperecated: Choose Multi returns the indices that user selected.
+// Deprecated: Choose Multi returns the indices that user selected.
 func ChooseMulti(sources []string, out io.Writer) []int {
 	val, err := SelectIndex(sources, true, out)
 	if err != nil {
