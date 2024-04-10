@@ -1,3 +1,7 @@
+v2.2.0
+======
+Apr 10, 2024
+
 - Implement new functions and methods that returns error instead of calling panic on error
 - Make TAB-Key same as RIGHT, and SHIFT-TAB as LEFT
 - Fix: box.exe could not be built
