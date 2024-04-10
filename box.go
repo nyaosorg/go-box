@@ -208,9 +208,9 @@ func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, e
 			draws[index] = _BOLD_ON + truncate(nodes[index].Text, b.width-2) + _BOLD_OFF
 		}
 		draws[cursor] = _BOLD_ON2 + truncate(nodes[cursor].Text, b.width-2) + _BOLD_OFF
-		status, _, h := b.PrintNoLastLineFeed(ctx, draws, offset, out)
-		if !status {
-			return []int{}, nil
+		_, h, err := b.PrintNoLastLineFeedX(ctx, draws, offset, out)
+		if err != nil {
+			return []int{}, err
 		}
 		for index := range selected {
 			draws[index] = truncate(nodes[index].Text, b.width-2)
