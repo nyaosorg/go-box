@@ -44,15 +44,15 @@ func NewBox() (*Box, error) {
 	return &Box{
 		width:  w,
 		height: h,
-		tty:    GoTty{TTY: tty1},
+		tty:    _GoTty{TTY: tty1},
 	}, err
 }
 
-type GoTty struct {
+type _GoTty struct {
 	*tty.TTY
 }
 
-func (g GoTty) GetKey() (string, error) {
+func (g _GoTty) GetKey() (string, error) {
 	var keys strings.Builder
 	clean, err := g.TTY.Raw()
 	if err != nil {
