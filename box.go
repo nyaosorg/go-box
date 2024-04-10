@@ -48,6 +48,7 @@ var wtRuneWidth = lazy.Of[*runewidth.Condition]{
 
 var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
+// PrintX outputs items in a tabular format
 func PrintX(ctx context.Context, nodes []string, out io.Writer) error {
 	b, err := NewBox()
 	if err != nil {
@@ -58,6 +59,7 @@ func PrintX(ctx context.Context, nodes []string, out io.Writer) error {
 	return err
 }
 
+// PrintX outputs items in a tabular format
 func (b *Box) PrintX(ctx context.Context,
 	nodes []string,
 	offset int,
@@ -75,6 +77,7 @@ func (b *Box) PrintX(ctx context.Context,
 	return columns, nlines, nil
 }
 
+// PrintNoLastLineFeedX outputs items in a tabular format, but removes the last line feed
 func (b *Box) PrintNoLastLineFeedX(ctx context.Context,
 	nodes []string,
 	offset int,
@@ -176,6 +179,7 @@ type nodeT struct {
 	Text  string
 }
 
+// SelectIndex returns the indexes that user selected.
 func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, error) {
 	cursor := 0
 	selected := make(map[int]struct{})
@@ -295,6 +299,7 @@ func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, e
 	}
 }
 
+// SelectString returns the strings that user selected.
 func (b *Box) SelectString(sources []string, multi bool, out io.Writer) ([]string, error) {
 	list, err := SelectIndex(sources, multi, out)
 	if err != nil {
