@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/mattn/go-colorable"
+
 	"github.com/nyaosorg/go-box/v2"
 )
 
