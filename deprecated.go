@@ -45,6 +45,15 @@ func (b *Box) PrintNoLastLineFeed(ctx context.Context,
 	return err == nil, col, row
 }
 
+// Deprecated:
+func PrintNoLastLineFeed(ctx context.Context,
+	nodes []string,
+	offset int,
+	out io.Writer) (bool, int, int) {
+
+	return New().PrintNoLastLineFeed(ctx, nodes, offset, out)
+}
+
 // Deprecated: Choice returns returns the string that user selected.
 func Choice(sources []string, out io.Writer) string {
 	val, err := SelectString(sources, false, out)
