@@ -182,6 +182,10 @@ type nodeT struct {
 
 // SelectIndex returns the indexes that user selected.
 func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, error) {
+	return b.SelectIndexContext(context.TODO(), sources, multi, out)
+}
+
+func (b *Box) SelectIndexContext(ctx context.Context, sources []string, multi bool, out io.Writer) ([]int, error) {
 	cursor := 0
 	selected := make(map[int]struct{})
 
@@ -202,7 +206,6 @@ func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, e
 		draws = []string{""}
 	}
 
-	ctx := context.TODO()
 	offset := 0
 	for {
 		for index := range selected {
@@ -302,7 +305,11 @@ func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, e
 
 // SelectString returns the strings that user selected.
 func (b *Box) SelectString(sources []string, multi bool, out io.Writer) ([]string, error) {
-	list, err := SelectIndex(sources, multi, out)
+	return b.SelectStringContext(context.TODO(), sources, multi, out)
+
+}
+func (b *Box) SelectStringContext(ctx context.Context, sources []string, multi bool, out io.Writer) ([]string, error) {
+	list, err := b.SelectIndexContext(ctx, sources, multi, out)
 	if err != nil {
 		return nil, err
 	}
@@ -315,22 +322,30 @@ func (b *Box) SelectString(sources []string, multi bool, out io.Writer) ([]strin
 
 // SelectIndex returns the indexes that user selected.
 func SelectIndex(sources []string, multi bool, out io.Writer) ([]int, error) {
+	return SelectIndexContext(context.TODO(), sources, multi, out)
+}
+
+func SelectIndexContext(ctx context.Context, sources []string, multi bool, out io.Writer) ([]int, error) {
 	b, err := NewBox()
 	if err != nil {
 		return nil, err
 	}
-	r, err := b.SelectIndex(sources, multi, out)
+	r, err := b.SelectIndexContext(ctx, sources, multi, out)
 	b.Close()
 	return r, err
 }
 
 // SelectString returns the strings that user selected.
 func SelectString(sources []string, multi bool, out io.Writer) ([]string, error) {
+	return SelectStringContext(context.TODO(), sources, multi, out)
+}
+
+func SelectStringContext(ctx context.Context, sources []string, multi bool, out io.Writer) ([]string, error) {
 	b, err := NewBox()
 	if err != nil {
 		return nil, err
 	}
-	r, err := b.SelectString(sources, multi, out)
+	r, err := b.SelectStringContext(ctx, sources, multi, out)
 	b.Close()
 	return r, err
 }
