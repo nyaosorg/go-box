@@ -56,6 +56,7 @@ func PrintX(ctx context.Context, nodes []string, out io.Writer) error {
 	}
 	b.height = 0
 	_, _, err = b.PrintX(ctx, nodes, 0, out)
+	b.Close()
 	return err
 }
 
@@ -329,5 +330,7 @@ func SelectString(sources []string, multi bool, out io.Writer) ([]string, error)
 	if err != nil {
 		return nil, err
 	}
-	return b.SelectString(sources, multi, out)
+	r, err := b.SelectString(sources, multi, out)
+	b.Close()
+	return r, err
 }

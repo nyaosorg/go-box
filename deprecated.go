@@ -51,7 +51,10 @@ func PrintNoLastLineFeed(ctx context.Context,
 	offset int,
 	out io.Writer) (bool, int, int) {
 
-	return New().PrintNoLastLineFeed(ctx, nodes, offset, out)
+	b := New()
+	status, col, row := b.PrintNoLastLineFeed(ctx, nodes, offset, out)
+	b.Close()
+	return status, col, row
 }
 
 // Deprecated: Choice returns returns the string that user selected.
