@@ -1,3 +1,11 @@
+v2.2.1
+======
+Apr 19, 2024
+
+- Implement `[(*Box)]Select{Index,String}Context`
+- Restore PrintNoLastLineFeed with `Deprecated:`
+- Set `Deprecated:` to `BoxT`, `New`, `Print`, `(*Box) Print`, and `(*Box) PrintNoLineFeed`
+
 v2.2.0
 ======
 Apr 10, 2024
