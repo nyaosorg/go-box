@@ -6,7 +6,7 @@ import (
 	"io"
 	"sort"
 
-	"github.com/mattn/go-tty"
+	"github.com/nyaosorg/go-readline-ny/tty8"
 
 	"github.com/nyaosorg/go-box/v3/grid"
 
@@ -14,28 +14,32 @@ import (
 	"github.com/nyaosorg/go-box/v3/internal/keys"
 )
 
+type Tty interface {
+	Open(onSize func(int)) error
+	GetKey() (string, error)
+	Size() (int, int, error)
+	Close() error
+}
+
 type Box struct {
 	grid.Grid
-	tty _Tty
+	Tty
 }
 
 func New() (*Box, error) {
-	tty1, err := tty.Open()
-	if err != nil {
-		return nil, err
+	b := &Box{
+		Tty: &tty8.Tty{},
 	}
-	w, h, err := tty1.Size()
-	return &Box{
-		Grid: grid.Grid{
-			Width:  w,
-			Height: h,
-		},
-		tty: _GoTty{TTY: tty1},
-	}, err
+	return b, b.Open()
 }
 
-func (b *Box) Close() error {
-	return b.tty.Close()
+func (b *Box) Open() error {
+	err := b.Tty.Open(nil)
+	if err != nil {
+		return err
+	}
+	b.Width, b.Height, err = b.Tty.Size()
+	return err
 }
 
 // SelectIndex returns the indexes that user selected.
@@ -93,7 +97,7 @@ func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, e
 			if bw, ok := out.(*bufio.Writer); ok {
 				bw.Flush()
 			}
-			key, err := b.tty.GetKey()
+			key, err := b.Tty.GetKey()
 			if err != nil {
 				continue
 			}

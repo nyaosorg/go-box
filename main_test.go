@@ -1,11 +1,10 @@
 package box
 
 import (
+	"github.com/nyaosorg/go-readline-ny/auto"
 	"io"
 	"strings"
 	"testing"
-
-	"github.com/nyaosorg/go-box/v3/grid"
 )
 
 func TestPrint(t *testing.T) {
@@ -46,12 +45,13 @@ func (t *TstTty) Close() error {
 
 func TestSelectIndex(t *testing.T) {
 	b := &Box{
-		Grid: grid.Grid{
-			Width:  80,
-			Height: 25,
-		},
-		tty: &TstTty{history: []string{"l", "l", "\n"}},
+		Tty: &auto.Pilot{Text: []string{"l", "l", "\r"}},
 	}
+	if err := b.Open(); err != nil {
+		t.Fatal(err.Error())
+	}
+	defer b.Close()
+
 	list := []string{"A", "B", "C", "D", "E"}
 	r, err := b.SelectIndex(list, false, io.Discard)
 	if err != nil {
