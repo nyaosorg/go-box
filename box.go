@@ -41,12 +41,12 @@ func (b *Box) Close() error {
 
 // Println outputs the given items in a tabular layout and appends
 // a newline after the final line.
-func (b *Box) Println(ctx context.Context,
+func (b *Box) Println(
 	nodes []string,
 	offset int,
 	out io.Writer) (int, int, error) {
 
-	columns, nlines, err := b.Print(ctx, nodes, offset, out)
+	columns, nlines, err := b.Print(nodes, offset, out)
 	if err != nil {
 		return columns, nlines, err
 	}
@@ -60,7 +60,7 @@ func (b *Box) Println(ctx context.Context,
 
 // Print outputs the given items in a tabular layout without appending
 // a trailing newline. It returns the number of rows and columns printed.
-func (b *Box) Print(ctx context.Context,
+func (b *Box) Print(
 	nodes []string,
 	offset int,
 	out io.Writer) (int, int, error) {
@@ -128,11 +128,6 @@ func (b *Box) Print(ctx context.Context,
 			b.cache[y] = lines[i]
 		}
 		y++
-		select {
-		case <-ctx.Done():
-			return nodePerLine, nlines, ctx.Err()
-		default:
-		}
 		i++
 		if i >= i_end {
 			break
@@ -174,7 +169,7 @@ func (b *Box) SelectIndexContext(ctx context.Context, sources []string, multi bo
 			draws[index] = ansi.BoldOn + truncate(nodes[index].Text, b.width-2) + ansi.BoldOff
 		}
 		draws[cursor] = ansi.BoldOn2 + truncate(nodes[cursor].Text, b.width-2) + ansi.BoldOff
-		_, h, err := b.Print(ctx, draws, offset, out)
+		_, h, err := b.Print(draws, offset, out)
 		if err != nil {
 			return []int{}, err
 		}

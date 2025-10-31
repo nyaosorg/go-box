@@ -1,7 +1,6 @@
 package box
 
 import (
-	"context"
 	"io"
 	"strings"
 	"testing"
@@ -10,7 +9,7 @@ import (
 func TestPrint(t *testing.T) {
 	var buffer strings.Builder
 
-	Println(context.TODO(), []string{
+	Println([]string{
 		"aaaa", "bbbb", "cccc", "fjdaksljflkdajfkljsalkfjdlkf",
 		"jfkldsjflkjdsalkfjlkdsajflkajds",
 		"fsdfsdf"}, &buffer)

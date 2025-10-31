@@ -44,13 +44,13 @@ var wtRuneWidth = lazy.Of[*runewidth.Condition]{
 
 // Println outputs the given items in a tabular layout and appends
 // a newline after the final line.
-func Println(ctx context.Context, nodes []string, out io.Writer) error {
+func Println(nodes []string, out io.Writer) error {
 	b, err := New()
 	if err != nil {
 		return err
 	}
 	b.height = 0
-	_, _, err = b.Println(ctx, nodes, 0, out)
+	_, _, err = b.Println(nodes, 0, out)
 	b.Close()
 	return err
 }
