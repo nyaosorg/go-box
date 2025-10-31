@@ -28,26 +28,6 @@ type _Tty interface {
 	Close() error
 }
 
-type Box struct {
-	width  int
-	height int
-	cache  [][]byte
-	tty    _Tty
-}
-
-func New() (*Box, error) {
-	tty1, err := tty.Open()
-	if err != nil {
-		return nil, err
-	}
-	w, h, err := tty1.Size()
-	return &Box{
-		width:  w,
-		height: h,
-		tty:    _GoTty{TTY: tty1},
-	}, err
-}
-
 type _GoTty struct {
 	*tty.TTY
 }
@@ -72,8 +52,4 @@ func (g _GoTty) GetKey() (string, error) {
 			return keys.String(), nil
 		}
 	}
-}
-
-func (b *Box) Close() error {
-	return b.tty.Close()
 }
