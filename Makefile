@@ -3,28 +3,35 @@ ifeq ($(OS),Windows_NT)
     SET=set
     DEL=del
     NUL=nul
+    WHICH=where.exe
 else
     SET=export
     DEL=rm
     NUL=/dev/null
+    WHICH=which
+endif
+
+ifndef GO
+    SUPPORTGO=go1.20.14
+    GO:=$(shell $(WHICH) $(SUPPORTGO) 2>$(NUL)|| echo go)
 endif
 
 NAME:=$(subst go-,,$(notdir $(CURDIR)))
 VERSION:=$(shell git describe --tags 2>$(NUL) || echo v0.0.0)
 GOOPT:=-ldflags "-s -w -X main.version=$(VERSION)"
-EXE:=$(shell go env GOEXE)
+EXE:=$(shell $(GO) env GOEXE)
 
 all:
-	go fmt ./...
-	$(SET) "CGO_ENABLED=0" && go build $(GOOPT)
-	$(SET) "CGO_ENABLED=0" && pushd "cmd/box" && go build -o ../../$(NAME)$(EXE) $(GOOPT) && popd
+	$(GO) fmt ./...
+	$(SET) "CGO_ENABLED=0" && $(GO) build $(GOOPT)
+	$(SET) "CGO_ENABLED=0" && pushd "cmd/box" && $(GO) build -o ../../$(NAME)$(EXE) $(GOOPT) && popd
 
 test:
-	go test -v
+	$(GO) test -v
 
 _dist:
 	$(MAKE) all
-	$(SET) "CGO_ENABLED=0" && go build $(GOOPT)
+	$(SET) "CGO_ENABLED=0" && $(GO) build $(GOOPT)
 	zip -9 $(NAME)-$(VERSION)-$(GOOS)-$(GOARCH).zip $(NAME)$(EXE)
 
 dist:
@@ -41,5 +48,9 @@ manifest:
 
 release:
 	gh release create -d --notes "" -t $(VERSION) $(VERSION) $(wildcard $(NAME)-$(VERSION)-*.zip)
+
+$(SUPPORTGO):
+	go install golang.org/dl/$(SUPPORTGO)@latest
+	$(SUPPORTGO) download
 
 .PHONY: all test dist _dist clean manifest release
