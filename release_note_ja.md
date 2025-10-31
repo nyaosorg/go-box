@@ -1,0 +1,26 @@
+( [English](./release_note.md) / **Japanese** )
+
+- メジャーバージョンを v3 にあげました。
+- Deprecated としていた関数・メソッドを廃止しました。
+  - `BoxT`
+  - `Choce`
+  - `ChoiceMulti`
+  - `ChooseMulti`
+  - `Choose`
+  - `PrintNoLastLineFeed`
+  - `Print`
+- 関数名・メソッド名を整理しました。
+  - `PrintX` → `Print` : 最終行で改行する整列表示関数・メソッド
+  - `PrintNoLastLineFeedX` -> `Print` : 最終行で改行しない整列表示関数・メソッド
+  - `NewBox` → `New` : `Box`型のコンストラクタ
+  - `AnsiCutter` →非公開化 : エスケープシーケンスをカットする正規表現オブジェクト
+- ソースファイルへの関数配置を次のように見直しました。
+  - `box.go` : `Box`型関連
+  - `main.go` : グローバルな定義
+  - `tty.go` : 端末関連
+  - `internal/ansi` : エスケープシーケンスの定義
+  - `internal/key` : キーコードの定義
+- import していたパッケージを最新化
+  - mattn/go-tty to v0.0.7
+  - mattn/go-colorable to v0.1.14
+  - mattn/go-runewidth to v0.0.19

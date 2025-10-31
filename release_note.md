@@ -1,3 +1,30 @@
+( **English** / [Japanese](./release_note_ja.md) )
+
+* **Bumped the major version to v3.**
+* **Removed deprecated functions and methods:**
+  * `BoxT`
+  * `Choce`
+  * `ChoiceMulti`
+  * `ChooseMulti`
+  * `Choose`
+  * `PrintNoLastLineFeed`
+  * `Print`
+* **Renamed and reorganized functions/methods:**
+  * `PrintX` → `Print`: prints items in a tabular format **with** a trailing newline
+  * `PrintNoLastLineFeedX` → `Print`: prints items in a tabular format **without** a trailing newline
+  * `NewBox` → `New`: constructor for the `Box` type
+  * `AnsiCutter` → made unexported: regular expression for removing ANSI escape sequences
+* **Reorganized function placements across source files:**
+  * `box.go`: definitions related to the `Box` type
+  * `main.go`: global definitions
+  * `tty.go`: terminal-related code
+  * `internal/ansi`: ANSI escape sequence definitions
+  * `internal/key`: key code definitions
+* **Updated imported packages to the latest versions:**
+  * `mattn/go-tty` → v0.0.7
+  * `mattn/go-colorable` → v0.1.14
+  * `mattn/go-runewidth` → v0.0.19
+
 v2.2.1
 ======
 Apr 19, 2024
