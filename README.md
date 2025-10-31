@@ -1,12 +1,21 @@
 Go-Box - Interactive item selector
 ==================================
 
+<!-- badges.cmd | -->
+[![License](https://img.shields.io/badge/License-MIT-red)](https://github.com/nyaosorg/go-box/v3/blob/master/LICENSE)
+[![Go Reference](https://pkg.go.dev/badge/github.com/nyaosorg/go-box/v3.svg)](https://pkg.go.dev/github.com/nyaosorg/go-box/v3)
+<!-- -->
+
+> **Note:** This is the documentation for **go-box v3**.  
+> If your code still imports `github.com/nyaosorg/go-box` or `/v2`,  
+> please update the import path to `github.com/nyaosorg/go-box/v3`.
+
 box - Executable
 ----------------
 
-- `box` reads choices from STDIN, 
-- On `box`, the user selects one by cursor (HJKL , C-n &amp; C-p &amp; C-f &amp; C-b)
-- `box` outputs chosen one to STDOUT.
+`box` is a command-line program built with the **go-box** library.  
+It reads a list of items from STDIN and lets the user select one interactively.
+
 
 ![demo](./demo.gif)
 
@@ -17,7 +26,7 @@ Download the binary package from [Releases](https://github.com/nyaosorg/go-box/r
 #### Use "go install"
 
 ```
-go install github.com/nyaosorg/go-box/v2/cmd/box@latest
+go install github.com/nyaosorg/go-box/v3/cmd/box@latest
 ```
 
 #### Use "scoop-installer"
@@ -42,7 +51,7 @@ package main
 import (
     "os"
 
-    "github.com/nyaosorg/go-box/v2"
+    "github.com/nyaosorg/go-box/v3"
 )
 
 func main() {
@@ -60,3 +69,9 @@ func main() {
     }
 }
 ```
+
+Release notes
+-------------
+
+- [English](release_note.md)
+- [Japanese](release_note_ja.md)

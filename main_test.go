@@ -1,16 +1,17 @@
 package box
 
 import (
-	"context"
 	"io"
 	"strings"
 	"testing"
+
+	"github.com/nyaosorg/go-ttyadapter/auto"
 )
 
 func TestPrint(t *testing.T) {
 	var buffer strings.Builder
 
-	Print(context.TODO(), []string{
+	Println([]string{
 		"aaaa", "bbbb", "cccc", "fjdaksljflkdajfkljsalkfjdlkf",
 		"jfkldsjflkjdsalkfjlkdsajflkajds",
 		"fsdfsdf"}, &buffer)
@@ -24,32 +25,6 @@ cccc                            fsdfsdf
 		t.Fatalf("expect `%s` buf `%s`", expect, actual)
 	}
 
-}
-
-func TestCutReduntantColorChange(t *testing.T) {
-	source := "\x1B[32;1m....\x1B[32;1m hogehoge"
-	expect := "\x1B[32;1m.... hogehoge"
-
-	actual := cutReduntantColorChange(source)
-	if expect != actual {
-		t.Fatalf("expect `%s` but `%s`", expect, actual)
-	}
-
-	source = "\x1B[32;1m....\x1B[33;1m hogehoge"
-	expect = source // not change
-
-	actual = cutReduntantColorChange(source)
-	if expect != actual {
-		t.Fatalf("expect `%s` but `%s`", expect, actual)
-	}
-
-	source = "\x1B[32;1m....\x1B[32;1m....\x1B[32;1m hogehoge"
-	expect = "\x1B[32;1m........ hogehoge"
-
-	actual = cutReduntantColorChange(source)
-	if expect != actual {
-		t.Fatalf("expect `%s` but `%s`", expect, actual)
-	}
 }
 
 type TstTty struct {
@@ -71,10 +46,13 @@ func (t *TstTty) Close() error {
 
 func TestSelectIndex(t *testing.T) {
 	b := &Box{
-		width:  80,
-		height: 25,
-		tty:    &TstTty{history: []string{"l", "l", "\n"}},
+		Tty: &auto.Pilot{Text: []string{"l", "l", "\r"}},
 	}
+	if err := b.Open(); err != nil {
+		t.Fatal(err.Error())
+	}
+	defer b.Close()
+
 	list := []string{"A", "B", "C", "D", "E"}
 	r, err := b.SelectIndex(list, false, io.Discard)
 	if err != nil {

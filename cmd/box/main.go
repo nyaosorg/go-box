@@ -11,7 +11,8 @@ import (
 
 	"github.com/mattn/go-colorable"
 
-	"github.com/nyaosorg/go-box/v2"
+	"github.com/nyaosorg/go-box/v3"
+	"github.com/nyaosorg/go-box/v3/internal/ansi"
 )
 
 var (
@@ -24,7 +25,7 @@ func mains(args []string) error {
 	if err != nil {
 		return err
 	}
-	data = box.AnsiCutter.ReplaceAll(data, []byte{})
+	data = ansi.RxSequence.ReplaceAll(data, []byte{})
 	list := strings.Split(string(data), "\n")
 	switch len(list) {
 	case 0:
