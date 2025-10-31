@@ -10,7 +10,7 @@ import (
 func TestPrint(t *testing.T) {
 	var buffer strings.Builder
 
-	Print(context.TODO(), []string{
+	Println(context.TODO(), []string{
 		"aaaa", "bbbb", "cccc", "fjdaksljflkdajfkljsalkfjdlkf",
 		"jfkldsjflkjdsalkfjlkdsajflkajds",
 		"fsdfsdf"}, &buffer)
