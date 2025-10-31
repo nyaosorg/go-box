@@ -26,6 +26,18 @@ type Box struct {
 	Tty
 }
 
+// New creates and initializes a Box using the default terminal backend (tty8).
+// It is equivalent to creating a Box with &tty8.Tty{} and calling Open().
+//
+// Example:
+//
+//	b, err := box.New()
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//	defer b.Close()
+//
+// Use this function when you do not need to customize the terminal input.
 func New() (*Box, error) {
 	b := &Box{
 		Tty: &tty8.Tty{},
@@ -33,6 +45,21 @@ func New() (*Box, error) {
 	return b, b.Open()
 }
 
+// Open initializes the Box with the terminal backend assigned to b.Tty.
+// This method is used when you want to provide a custom TTY implementation
+// instead of the default one created by New().
+//
+// Example:
+//
+//	import "github.com/nyaosorg/go-readline-ny/auto"
+//
+//	b := &box.Box{
+//		Tty: &auto.Pilot{Text: []string{"l", "l", "\r"}},
+//	}
+//	if err := b.Open(); err != nil {
+//		log.Fatal(err)
+//	}
+//	defer b.Close()
 func (b *Box) Open() error {
 	err := b.Tty.Open(nil)
 	if err != nil {
