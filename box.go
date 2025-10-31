@@ -2,7 +2,6 @@ package box
 
 import (
 	"bufio"
-	"context"
 	"fmt"
 	"io"
 	"sort"
@@ -41,10 +40,6 @@ func (b *Box) Close() error {
 
 // SelectIndex returns the indexes that user selected.
 func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, error) {
-	return b.SelectIndexContext(context.TODO(), sources, multi, out)
-}
-
-func (b *Box) SelectIndexContext(ctx context.Context, sources []string, multi bool, out io.Writer) ([]int, error) {
 	cursor := 0
 	selected := make(map[int]struct{})
 
@@ -164,11 +159,7 @@ func (b *Box) SelectIndexContext(ctx context.Context, sources []string, multi bo
 
 // SelectString returns the strings that user selected.
 func (b *Box) SelectString(sources []string, multi bool, out io.Writer) ([]string, error) {
-	return b.SelectStringContext(context.TODO(), sources, multi, out)
-
-}
-func (b *Box) SelectStringContext(ctx context.Context, sources []string, multi bool, out io.Writer) ([]string, error) {
-	list, err := b.SelectIndexContext(ctx, sources, multi, out)
+	list, err := b.SelectIndex(sources, multi, out)
 	if err != nil {
 		return nil, err
 	}

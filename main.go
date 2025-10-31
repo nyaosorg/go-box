@@ -1,7 +1,6 @@
 package box
 
 import (
-	"context"
 	"io"
 )
 
@@ -25,30 +24,22 @@ type nodeT struct {
 
 // SelectIndex returns the indexes that user selected.
 func SelectIndex(sources []string, multi bool, out io.Writer) ([]int, error) {
-	return SelectIndexContext(context.TODO(), sources, multi, out)
-}
-
-func SelectIndexContext(ctx context.Context, sources []string, multi bool, out io.Writer) ([]int, error) {
 	b, err := New()
 	if err != nil {
 		return nil, err
 	}
-	r, err := b.SelectIndexContext(ctx, sources, multi, out)
+	r, err := b.SelectIndex(sources, multi, out)
 	b.Close()
 	return r, err
 }
 
 // SelectString returns the strings that user selected.
 func SelectString(sources []string, multi bool, out io.Writer) ([]string, error) {
-	return SelectStringContext(context.TODO(), sources, multi, out)
-}
-
-func SelectStringContext(ctx context.Context, sources []string, multi bool, out io.Writer) ([]string, error) {
 	b, err := New()
 	if err != nil {
 		return nil, err
 	}
-	r, err := b.SelectStringContext(ctx, sources, multi, out)
+	r, err := b.SelectString(sources, multi, out)
 	b.Close()
 	return r, err
 }
