@@ -5,7 +5,7 @@ package main
 import (
 	"os"
 
-	"github.com/nyaosorg/go-box/v2"
+	"github.com/nyaosorg/go-box/v3"
 )
 
 func main() {

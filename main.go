@@ -13,7 +13,7 @@ import (
 
 	"github.com/mattn/go-runewidth"
 
-	"github.com/nyaosorg/go-box/v2/internal/lazy"
+	"github.com/nyaosorg/go-box/v3/internal/lazy"
 )
 
 var reduntantColorChangePattern = regexp.MustCompile("(\x1B[^m]+m).*?(\x1B[^m]+m)")

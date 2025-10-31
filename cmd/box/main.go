@@ -11,7 +11,7 @@ import (
 
 	"github.com/mattn/go-colorable"
 
-	"github.com/nyaosorg/go-box/v2"
+	"github.com/nyaosorg/go-box/v3"
 )
 
 var (
