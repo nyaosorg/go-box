@@ -68,7 +68,7 @@ func (b *Box) Println(ctx context.Context,
 	offset int,
 	out io.Writer) (int, int, error) {
 
-	columns, nlines, err := b.PrintNoLastLineFeedX(ctx, nodes, offset, out)
+	columns, nlines, err := b.Print(ctx, nodes, offset, out)
 	if err != nil {
 		return columns, nlines, err
 	}
@@ -80,8 +80,9 @@ func (b *Box) Println(ctx context.Context,
 	return columns, nlines, nil
 }
 
-// PrintNoLastLineFeedX outputs items in a tabular format, but removes the last line feed
-func (b *Box) PrintNoLastLineFeedX(ctx context.Context,
+// Print outputs the given items in a tabular layout without appending
+// a trailing newline. It returns the number of rows and columns printed.
+func (b *Box) Print(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (int, int, error) {
@@ -214,7 +215,7 @@ func (b *Box) SelectIndexContext(ctx context.Context, sources []string, multi bo
 			draws[index] = _BOLD_ON + truncate(nodes[index].Text, b.width-2) + _BOLD_OFF
 		}
 		draws[cursor] = _BOLD_ON2 + truncate(nodes[cursor].Text, b.width-2) + _BOLD_OFF
-		_, h, err := b.PrintNoLastLineFeedX(ctx, draws, offset, out)
+		_, h, err := b.Print(ctx, draws, offset, out)
 		if err != nil {
 			return []int{}, err
 		}
