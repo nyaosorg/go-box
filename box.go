@@ -12,6 +12,7 @@ import (
 	"github.com/mattn/go-tty"
 
 	"github.com/nyaosorg/go-box/v3/internal/ansi"
+	"github.com/nyaosorg/go-box/v3/internal/keys"
 )
 
 type Box struct {
@@ -122,7 +123,7 @@ func (b *Box) Print(ctx context.Context,
 			line = cutReduntantColorChange(line)
 			io.WriteString(out, line)
 			if len(b.cache[y]) > 0 {
-				fmt.Fprint(out, _ERASE_LINE)
+				fmt.Fprint(out, ansi.EraseLine)
 			}
 			b.cache[y] = lines[i]
 		}
@@ -159,8 +160,8 @@ func (b *Box) SelectIndexContext(ctx context.Context, sources []string, multi bo
 			draws = append(draws, val)
 		}
 	}
-	io.WriteString(out, _CURSOR_OFF)
-	defer io.WriteString(out, _CURSOR_ON)
+	io.WriteString(out, ansi.CursorOff)
+	defer io.WriteString(out, ansi.CursorOn)
 
 	if len(nodes) <= 0 {
 		nodes = []nodeT{nodeT{-1, ""}}
@@ -170,9 +171,9 @@ func (b *Box) SelectIndexContext(ctx context.Context, sources []string, multi bo
 	offset := 0
 	for {
 		for index := range selected {
-			draws[index] = _BOLD_ON + truncate(nodes[index].Text, b.width-2) + _BOLD_OFF
+			draws[index] = ansi.BoldOn + truncate(nodes[index].Text, b.width-2) + ansi.BoldOff
 		}
-		draws[cursor] = _BOLD_ON2 + truncate(nodes[cursor].Text, b.width-2) + _BOLD_OFF
+		draws[cursor] = ansi.BoldOn2 + truncate(nodes[cursor].Text, b.width-2) + ansi.BoldOff
 		_, h, err := b.Print(ctx, draws, offset, out)
 		if err != nil {
 			return []int{}, err
@@ -205,24 +206,24 @@ func (b *Box) SelectIndexContext(ctx context.Context, sources []string, multi bo
 				continue
 			}
 			switch key {
-			case "h", _K_CTRL_B, _K_LEFT, _K_SHIFT_TAB:
+			case "h", keys.CtrlB, keys.Left, keys.ShiftTab:
 				cursor = (cursor + len(nodes) - h) % len(nodes)
-			case "H", _K_CTRL_LEFT:
+			case "H", keys.CtrlLeft:
 				cursor = (cursor + len(nodes) - h) % len(nodes)
 				doSelect()
-			case "L", _K_CTRL_RIGHT:
+			case "L", keys.CtrlRight:
 				doSelect()
 				fallthrough
-			case "l", _K_CTRL_F, _K_RIGHT, "\t":
+			case "l", keys.CtrlF, keys.Right, "\t":
 				cursor = (cursor + h) % len(nodes)
-			case " ", "J", _K_CTRL_DOWN:
+			case " ", "J", keys.CtrlDown:
 				doSelect()
 				fallthrough
-			case "j", _K_CTRL_N, _K_DOWN:
+			case "j", keys.CtrlN, keys.Down:
 				cursor = (cursor + 1) % len(nodes)
-			case "k", _K_CTRL_P, _K_UP:
+			case "k", keys.CtrlP, keys.Up:
 				cursor = (cursor + len(nodes) - 1) % len(nodes)
-			case "\b", "K", _K_CTRL_UP:
+			case "\b", "K", keys.CtrlUp:
 				cursor = (cursor + len(nodes) - 1) % len(nodes)
 				doSelect()
 			case "\r", "\n":
@@ -237,7 +238,7 @@ func (b *Box) SelectIndexContext(ctx context.Context, sources []string, multi bo
 					result = []int{cursor}
 				}
 				return result, nil
-			case "\x1B", _K_CTRL_G:
+			case "\x1B", keys.CtrlG:
 				return []int{}, nil
 			}
 
@@ -253,11 +254,11 @@ func (b *Box) SelectIndexContext(ctx context.Context, sources []string, multi bo
 		}
 		if h < b.height {
 			if h > 1 {
-				fmt.Fprintf(out, _UP_N, h-1)
+				fmt.Fprintf(out, ansi.UpN, h-1)
 			}
 		} else {
 			if b.height > 1 {
-				fmt.Fprintf(out, _UP_N, b.height-1)
+				fmt.Fprintf(out, ansi.UpN, b.height-1)
 			}
 		}
 		fmt.Fprint(out, "\r")

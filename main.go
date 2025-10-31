@@ -55,16 +55,6 @@ func Println(ctx context.Context, nodes []string, out io.Writer) error {
 	return err
 }
 
-const (
-	_CURSOR_OFF = "\x1B[?25l"
-	_CURSOR_ON  = "\x1B[?25h"
-	_BOLD_ON    = "\x1B[0;47;30m"
-	_BOLD_ON2   = "\x1B[0;1;7m"
-	_BOLD_OFF   = "\x1B[0m"
-	_UP_N       = "\x1B[%dA"
-	_ERASE_LINE = "\x1B[0K"
-)
-
 func truncate(s string, w int) string {
 	return wtRuneWidth.Value().Truncate(strings.TrimSpace(s), w, "")
 }
