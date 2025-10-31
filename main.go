@@ -2,6 +2,9 @@ package box
 
 import (
 	"io"
+	"strings"
+
+	"github.com/mattn/go-runewidth"
 )
 
 // Println outputs the given items in a tabular layout and appends
@@ -42,4 +45,8 @@ func SelectString(sources []string, multi bool, out io.Writer) ([]string, error)
 	r, err := b.SelectString(sources, multi, out)
 	b.Close()
 	return r, err
+}
+
+func truncate(s string, w int) string {
+	return runewidth.Truncate(strings.TrimSpace(s), w, "")
 }

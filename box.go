@@ -77,7 +77,7 @@ func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, e
 	nodes := make([]nodeT, 0, len(sources))
 	draws := make([]string, 0, len(sources))
 	for i, text := range sources {
-		val := grid.Truncate(text, b.Width-1)
+		val := truncate(text, b.Width-1)
 		if val != "" {
 			nodes = append(nodes, nodeT{Index: i, Text: val})
 			draws = append(draws, val)
@@ -94,17 +94,17 @@ func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, e
 	offset := 0
 	for {
 		for index := range selected {
-			draws[index] = ansi.BoldOn + grid.Truncate(nodes[index].Text, b.Width-2) + ansi.BoldOff
+			draws[index] = ansi.BoldOn + truncate(nodes[index].Text, b.Width-2) + ansi.BoldOff
 		}
-		draws[cursor] = ansi.BoldOn2 + grid.Truncate(nodes[cursor].Text, b.Width-2) + ansi.BoldOff
+		draws[cursor] = ansi.BoldOn2 + truncate(nodes[cursor].Text, b.Width-2) + ansi.BoldOff
 		_, h, err := b.Print(draws, offset, out)
 		if err != nil {
 			return []int{}, err
 		}
 		for index := range selected {
-			draws[index] = grid.Truncate(nodes[index].Text, b.Width-2)
+			draws[index] = truncate(nodes[index].Text, b.Width-2)
 		}
-		draws[cursor] = grid.Truncate(nodes[cursor].Text, b.Width-2)
+		draws[cursor] = truncate(nodes[cursor].Text, b.Width-2)
 		last := cursor
 
 		var doSelect func()

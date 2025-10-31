@@ -7,6 +7,8 @@ import (
 
 	"strings"
 
+	"github.com/mattn/go-runewidth"
+
 	"github.com/nyaosorg/go-box/v3/internal/ansi"
 )
 
@@ -46,10 +48,9 @@ func (g *Grid) Print(
 		return 0, 0, nil
 	}
 
-	rw := wtRuneWidth.Value()
 	maxLen := 1
 	for _, finfo := range nodes {
-		length := rw.StringWidth(ansi.RxSequence.ReplaceAllString(finfo, ""))
+		length := runewidth.StringWidth(ansi.RxSequence.ReplaceAllString(finfo, ""))
 		if length > maxLen {
 			maxLen = length
 		}
@@ -64,7 +65,7 @@ func (g *Grid) Print(
 	row := 0
 	for _, finfo := range nodes {
 		lines[row] = append(lines[row], finfo...)
-		w := rw.StringWidth(ansi.RxSequence.ReplaceAllString(finfo, ""))
+		w := runewidth.StringWidth(ansi.RxSequence.ReplaceAllString(finfo, ""))
 		if maxLen < g.Width {
 			for i := maxLen + 1; i > w; i-- {
 				lines[row] = append(lines[row], ' ')

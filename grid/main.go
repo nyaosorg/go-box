@@ -1,13 +1,7 @@
 package grid
 
 import (
-	"os"
 	"regexp"
-	"strings"
-
-	"github.com/mattn/go-runewidth"
-
-	"github.com/nyaosorg/go-box/v3/internal/lazy"
 )
 
 var reduntantColorChangePattern = regexp.MustCompile("(\x1B[^m]+m).*?(\x1B[^m]+m)")
@@ -28,18 +22,4 @@ func cutReduntantColorChange(s string) string {
 			return s[:m[4]] + cutReduntantColorChange(s[m[4]:])
 		}
 	}
-}
-
-var wtRuneWidth = lazy.Of[*runewidth.Condition]{
-	New: func() *runewidth.Condition {
-		c := runewidth.NewCondition()
-		if os.Getenv("WT_SESSION") != "" && os.Getenv("WT_PROFILE_ID") != "" {
-			c.EastAsianWidth = false
-		}
-		return c
-	},
-}
-
-func Truncate(s string, w int) string {
-	return wtRuneWidth.Value().Truncate(strings.TrimSpace(s), w, "")
 }
