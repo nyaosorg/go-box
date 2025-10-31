@@ -27,7 +27,7 @@ all:
 	$(SET) "CGO_ENABLED=0" && pushd "cmd/box" && $(GO) build -o ../../$(NAME)$(EXE) $(GOOPT) && popd
 
 test:
-	$(GO) test -v
+	$(GO) test -v ./...
 
 _dist:
 	$(MAKE) all

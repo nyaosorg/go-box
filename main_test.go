@@ -11,10 +11,17 @@ import (
 func TestPrint(t *testing.T) {
 	var buffer strings.Builder
 
-	Println([]string{
+	b := &Box{Tty: &auto.Pilot{}}
+	err := b.Open()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	defer b.Close()
+
+	b.Println([]string{
 		"aaaa", "bbbb", "cccc", "fjdaksljflkdajfkljsalkfjdlkf",
 		"jfkldsjflkjdsalkfjlkdsajflkajds",
-		"fsdfsdf"}, &buffer)
+		"fsdfsdf"}, 0, &buffer)
 
 	actual := buffer.String()
 	expect := `aaaa                            fjdaksljflkdajfkljsalkfjdlkf
