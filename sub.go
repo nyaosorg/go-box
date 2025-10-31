@@ -35,7 +35,7 @@ type Box struct {
 	tty    _Tty
 }
 
-func NewBox() (*Box, error) {
+func New() (*Box, error) {
 	tty1, err := tty.Open()
 	if err != nil {
 		return nil, err

@@ -51,7 +51,7 @@ var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 // Println outputs the given items in a tabular layout and appends
 // a newline after the final line.
 func Println(ctx context.Context, nodes []string, out io.Writer) error {
-	b, err := NewBox()
+	b, err := New()
 	if err != nil {
 		return err
 	}
@@ -329,7 +329,7 @@ func SelectIndex(sources []string, multi bool, out io.Writer) ([]int, error) {
 }
 
 func SelectIndexContext(ctx context.Context, sources []string, multi bool, out io.Writer) ([]int, error) {
-	b, err := NewBox()
+	b, err := New()
 	if err != nil {
 		return nil, err
 	}
@@ -344,7 +344,7 @@ func SelectString(sources []string, multi bool, out io.Writer) ([]string, error)
 }
 
 func SelectStringContext(ctx context.Context, sources []string, multi bool, out io.Writer) ([]string, error) {
-	b, err := NewBox()
+	b, err := New()
 	if err != nil {
 		return nil, err
 	}
