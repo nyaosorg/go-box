@@ -1,5 +1,9 @@
 ( [English](./release_note.md) / **Japanese** )
 
+v3.0.0
+======
+Nov 1, 2025
+
 - メジャーバージョンを **v3** に更新。
 - Deprecated としていた関数・メソッドを削除。
   - `BoxT`, `Choce`, `ChoiceMulti`, `ChooseMulti`, `Choose`, `PrintNoLastLineFeed`, `Print`

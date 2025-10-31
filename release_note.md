@@ -1,5 +1,9 @@
 ( **English** / [Japanese](./release_note_ja.md) )
 
+v3.0.0
+======
+Nov 1, 2025
+
 - **Bumped the major version to v3.**
 - **Removed deprecated functions and methods:**
   - `BoxT`, `Choce`, `ChoiceMulti`, `ChooseMulti`, `Choose`, `PrintNoLastLineFeed`, `Print`
