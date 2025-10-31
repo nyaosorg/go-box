@@ -13,6 +13,7 @@ import (
 
 	"github.com/mattn/go-runewidth"
 
+	"github.com/nyaosorg/go-box/v3/internal/ansi"
 	"github.com/nyaosorg/go-box/v3/internal/lazy"
 )
 
@@ -45,8 +46,6 @@ var wtRuneWidth = lazy.Of[*runewidth.Condition]{
 		return c
 	},
 }
-
-var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
 // Println outputs the given items in a tabular layout and appends
 // a newline after the final line.
@@ -94,7 +93,7 @@ func (b *Box) Print(ctx context.Context,
 	rw := wtRuneWidth.Value()
 	maxLen := 1
 	for _, finfo := range nodes {
-		length := rw.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
+		length := rw.StringWidth(ansi.RxSequence.ReplaceAllString(finfo, ""))
 		if length > maxLen {
 			maxLen = length
 		}
@@ -109,7 +108,7 @@ func (b *Box) Print(ctx context.Context,
 	row := 0
 	for _, finfo := range nodes {
 		lines[row] = append(lines[row], finfo...)
-		w := rw.StringWidth(AnsiCutter.ReplaceAllString(finfo, ""))
+		w := rw.StringWidth(ansi.RxSequence.ReplaceAllString(finfo, ""))
 		if maxLen < b.width {
 			for i := maxLen + 1; i > w; i-- {
 				lines[row] = append(lines[row], ' ')
