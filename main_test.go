@@ -1,10 +1,11 @@
 package box
 
 import (
-	"github.com/nyaosorg/go-readline-ny/auto"
 	"io"
 	"strings"
 	"testing"
+
+	"github.com/nyaosorg/go-ttyadapter/auto"
 )
 
 func TestPrint(t *testing.T) {

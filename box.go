@@ -6,7 +6,8 @@ import (
 	"io"
 	"sort"
 
-	"github.com/nyaosorg/go-readline-ny/tty8"
+	"github.com/nyaosorg/go-ttyadapter"
+	"github.com/nyaosorg/go-ttyadapter/tty8"
 
 	"github.com/nyaosorg/go-box/v3/grid"
 
@@ -14,16 +15,9 @@ import (
 	"github.com/nyaosorg/go-box/v3/internal/keys"
 )
 
-type Tty interface {
-	Open(onSize func(int)) error
-	GetKey() (string, error)
-	Size() (int, int, error)
-	Close() error
-}
-
 type Box struct {
 	grid.Grid
-	Tty
+	ttyadapter.Tty
 }
 
 // New creates and initializes a Box using the default terminal backend (tty8).
@@ -51,7 +45,7 @@ func New() (*Box, error) {
 //
 // Example:
 //
-//	import "github.com/nyaosorg/go-readline-ny/auto"
+//	import "github.com/nyaosorg/go-ttyadapter/auto"
 //
 //	b := &box.Box{
 //		Tty: &auto.Pilot{Text: []string{"l", "l", "\r"}},
