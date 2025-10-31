@@ -2,6 +2,7 @@ Go-Box - Interactive item selector
 ==================================
 
 <!-- badges.cmd | -->
+[![Go Test](https://github.com/nyaosorg/go-box/v3/actions/workflows/go.yml/badge.svg)](https://github.com/nyaosorg/go-box/v3/actions/workflows/go.yml)
 [![License](https://img.shields.io/badge/License-MIT-red)](https://github.com/nyaosorg/go-box/v3/blob/master/LICENSE)
 [![Go Reference](https://pkg.go.dev/badge/github.com/nyaosorg/go-box/v3.svg)](https://pkg.go.dev/github.com/nyaosorg/go-box/v3)
 <!-- -->
