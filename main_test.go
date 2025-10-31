@@ -4,6 +4,8 @@ import (
 	"io"
 	"strings"
 	"testing"
+
+	"github.com/nyaosorg/go-box/v3/grid"
 )
 
 func TestPrint(t *testing.T) {
@@ -25,32 +27,6 @@ cccc                            fsdfsdf
 
 }
 
-func TestCutReduntantColorChange(t *testing.T) {
-	source := "\x1B[32;1m....\x1B[32;1m hogehoge"
-	expect := "\x1B[32;1m.... hogehoge"
-
-	actual := cutReduntantColorChange(source)
-	if expect != actual {
-		t.Fatalf("expect `%s` but `%s`", expect, actual)
-	}
-
-	source = "\x1B[32;1m....\x1B[33;1m hogehoge"
-	expect = source // not change
-
-	actual = cutReduntantColorChange(source)
-	if expect != actual {
-		t.Fatalf("expect `%s` but `%s`", expect, actual)
-	}
-
-	source = "\x1B[32;1m....\x1B[32;1m....\x1B[32;1m hogehoge"
-	expect = "\x1B[32;1m........ hogehoge"
-
-	actual = cutReduntantColorChange(source)
-	if expect != actual {
-		t.Fatalf("expect `%s` but `%s`", expect, actual)
-	}
-}
-
 type TstTty struct {
 	history []string
 }
@@ -70,9 +46,11 @@ func (t *TstTty) Close() error {
 
 func TestSelectIndex(t *testing.T) {
 	b := &Box{
-		width:  80,
-		height: 25,
-		tty:    &TstTty{history: []string{"l", "l", "\n"}},
+		Grid: grid.Grid{
+			Width:  80,
+			Height: 25,
+		},
+		tty: &TstTty{history: []string{"l", "l", "\n"}},
 	}
 	list := []string{"A", "B", "C", "D", "E"}
 	r, err := b.SelectIndex(list, false, io.Discard)
