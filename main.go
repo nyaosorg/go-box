@@ -48,20 +48,22 @@ var wtRuneWidth = lazy.Of[*runewidth.Condition]{
 
 var AnsiCutter = regexp.MustCompile("\x1B[^a-zA-Z]*[A-Za-z]")
 
-// PrintX outputs items in a tabular format
-func PrintX(ctx context.Context, nodes []string, out io.Writer) error {
+// Println outputs the given items in a tabular layout and appends
+// a newline after the final line.
+func Println(ctx context.Context, nodes []string, out io.Writer) error {
 	b, err := NewBox()
 	if err != nil {
 		return err
 	}
 	b.height = 0
-	_, _, err = b.PrintX(ctx, nodes, 0, out)
+	_, _, err = b.Println(ctx, nodes, 0, out)
 	b.Close()
 	return err
 }
 
-// PrintX outputs items in a tabular format
-func (b *Box) PrintX(ctx context.Context,
+// Println outputs the given items in a tabular layout and appends
+// a newline after the final line.
+func (b *Box) Println(ctx context.Context,
 	nodes []string,
 	offset int,
 	out io.Writer) (int, int, error) {
