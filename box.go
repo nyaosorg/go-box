@@ -155,7 +155,7 @@ func (b *Box) SelectIndex(sources []string, multi bool, out io.Writer) ([]int, e
 					result = []int{cursor}
 				}
 				return result, nil
-			case "\x1B", keys.CtrlG:
+			case "\x1B", keys.CtrlG, keys.CtrlC:
 				return []int{}, nil
 			}
 

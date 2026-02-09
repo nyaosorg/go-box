@@ -10,6 +10,7 @@ const (
 	CtrlN     = "\x0E"
 	CtrlP     = "\x10"
 	CtrlG     = "\x07"
+	CtrlC     = "\x03"
 	CtrlDown  = "\x1B[1;5B"
 	CtrlLeft  = "\x1B[1;5D"
 	CtrlRight = "\x1B[1;5C"
