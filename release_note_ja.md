@@ -1,3 +1,6 @@
+リリースノート
+=============
+
 ( [English](./release_note.md) / **Japanese** )
 
 - go-ttyadapter を v0.3.0 へ更新。`tty8` のかわりに `go-ttyadapter/tty8pe` を使用 (#5)
@@ -6,7 +9,7 @@
 - clipperhouse/uax29 を v2.2.0 から v2.6.0 へ更新 (#6)
 
 v3.0.0
-======
+------
 Nov 1, 2025
 
 - メジャーバージョンを **v3** に更新。

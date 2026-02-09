@@ -1,3 +1,6 @@
+Release notes
+=============
+
 ( **English** / [Japanese](./release_note_ja.md) )
 
 - Update go-ttyadapter to v0.3.0 and use `go-ttyadapter/tty8pe` instead of `tty8` (#5)
@@ -6,7 +9,7 @@
 - Update clipperhouse/uax29 from v2.2.0 to v2.6.0 (#6)
 
 v3.0.0
-======
+------
 Nov 1, 2025
 
 - **Bumped the major version to v3.**
@@ -43,7 +46,7 @@ Nov 1, 2025
 [xterm]: https://pkg.go.dev/golang.org/x/term
 
 v2.2.1
-======
+------
 Apr 19, 2024
 
 - Implement `[(*Box)]Select{Index,String}Context`
@@ -51,7 +54,7 @@ Apr 19, 2024
 - Set `Deprecated:` to `BoxT`, `New`, `Print`, `(*Box) Print`, and `(*Box) PrintNoLineFeed`
 
 v2.2.0
-======
+------
 Apr 10, 2024
 
 - Implement new functions and methods that returns error instead of calling panic on error
@@ -62,27 +65,27 @@ Apr 10, 2024
 - Add test
 
 v2.1.3
-=======
+------
 Feb 20, 2022
 
 - Fix: the import-path was old one in the test-code.  
   (as a result, `go get -u` downloaded both zetamatta/go-box and nyaosorg/go-box )
 
 v2.1.2
-=======
+------
 Sep 13, 2021
 
 - Change owner: zetamatta to nyaosorg
 - Fix: import "github.com/zetamatta/go-box/v2" remained
 
 v2.0.8
-=======
+------
 Feb 22, 2021
 
 - Support Windows Terminal
 
 v2.0.4
-=======
+------
 Apr 13, 2019
 
 Do not use `ESC[0A`
