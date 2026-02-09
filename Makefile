@@ -21,17 +21,15 @@ VERSION:=$(shell git describe --tags 2>$(NUL) || echo v0.0.0)
 GOOPT:=-ldflags "-s -w -X main.version=$(VERSION)"
 EXE:=$(shell $(GO) env GOEXE)
 
-all:
+build:
 	$(GO) fmt ./...
-	$(SET) "CGO_ENABLED=0" && $(GO) build $(GOOPT)
-	$(SET) "CGO_ENABLED=0" && pushd "cmd/box" && $(GO) build -o ../../$(NAME)$(EXE) $(GOOPT) && popd
+	$(SET) "CGO_ENABLED=0" && $(GO) build -C "cmd/box" -o $(CURDIR) $(GOOPT)
 
 test:
 	$(GO) test -v ./...
 
 _dist:
-	$(MAKE) all
-	$(SET) "CGO_ENABLED=0" && $(GO) build $(GOOPT)
+	$(SET) "CGO_ENABLED=0" && $(GO) build -C "cmd/box" -o $(CURDIR) $(GOOPT)
 	zip -9 $(NAME)-$(VERSION)-$(GOOS)-$(GOARCH).zip $(NAME)$(EXE)
 
 dist:
@@ -47,7 +45,7 @@ manifest:
 	make-scoop-manifest *-windows-*.zip > $(NAME).json
 
 release:
-	gh release create -d --notes "" -t $(VERSION) $(VERSION) $(wildcard $(NAME)-$(VERSION)-*.zip)
+	pwsh -Command "latest-notes.ps1" | gh release create -d --notes-file - -t $(VERSION) $(VERSION) $(wildcard $(NAME)-$(VERSION)-*.zip)
 
 $(SUPPORTGO):
 	go install golang.org/dl/$(SUPPORTGO)@latest
