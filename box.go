@@ -7,7 +7,7 @@ import (
 	"sort"
 
 	"github.com/nyaosorg/go-ttyadapter"
-	"github.com/nyaosorg/go-ttyadapter/tty8"
+	"github.com/nyaosorg/go-ttyadapter/tty8pe"
 
 	"github.com/nyaosorg/go-box/v3/grid"
 
@@ -20,8 +20,8 @@ type Box struct {
 	ttyadapter.Tty
 }
 
-// New creates and initializes a Box using the default terminal backend (tty8).
-// It is equivalent to creating a Box with &tty8.Tty{} and calling Open().
+// New creates and initializes a Box using the default terminal backend (tty8pe).
+// It is equivalent to creating a Box with &tty8pe.Tty{} and calling Open().
 //
 // Example:
 //
@@ -34,7 +34,7 @@ type Box struct {
 // Use this function when you do not need to customize the terminal input.
 func New() (*Box, error) {
 	b := &Box{
-		Tty: &tty8.Tty{},
+		Tty: &tty8pe.Tty{},
 	}
 	return b, b.Open()
 }
