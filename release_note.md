@@ -1,6 +1,10 @@
 Release notes
 =============
 
+v3.1.0
+------
+Feb 10, 2026
+
 ( **English** / [Japanese](./release_note_ja.md) )
 
 - Update go-ttyadapter to v0.3.0 and use `go-ttyadapter/tty8pe` instead of `tty8` (#5)
