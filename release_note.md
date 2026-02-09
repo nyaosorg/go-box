@@ -1,6 +1,8 @@
 ( **English** / [Japanese](./release_note_ja.md) )
 
 - Update go-ttyadapter to v0.3.0 and use `go-ttyadapter/tty8pe` instead of `tty8` (#5)
+- Update golang.org/x/sys from v0.29.0 to v0.30.0 (#6)
+- Update clipperhouse/uax29 from v2.2.0 to v2.6.0 (#6)
 
 v3.0.0
 ======
