@@ -1,5 +1,8 @@
 ( [English](./release_note.md) / **Japanese** )
 
+- golang.org/x/sys を v0.29.0 から v0.30.0 へ更新 (#6)
+- clipperhouse/uax29 を v2.2.0 から v2.6.0 へ更新 (#6)
+
 v3.0.0
 ======
 Nov 1, 2025
