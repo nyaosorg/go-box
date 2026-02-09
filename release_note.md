@@ -1,13 +1,16 @@
 Release notes
 =============
+( **English** / [Japanese](./release_note_ja.md) )
+
+v3.1.1
+------
+Feb 10, 2026
 
 - `Meta`+`Ctrl`+`G` and `Meta`+`Ctrl`+`C` can now be used to cancel input (#11)
 
 v3.1.0
 ------
 Feb 10, 2026
-
-( **English** / [Japanese](./release_note_ja.md) )
 
 - Update go-ttyadapter to v0.3.0 and use `go-ttyadapter/tty8pe` instead of `tty8` (#5)
   - The `Escape` key is treated as a prefix to prevent misbehavior from split ESC sequences; use `Ctrl`+`G` or `Ctrl`+`C` as cancel instead (#7)

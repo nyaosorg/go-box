@@ -1,7 +1,10 @@
 リリースノート
 =============
-
 ( [English](./release_note.md) / **Japanese** )
+
+v3.1.1
+------
+Feb 10, 2026
 
 - `Meta`+`Ctrl`+`G` と `Meta`+`Ctrl`+`C` も `Ctrl`+`G` と同様に機能するようにした。(#11)
 
