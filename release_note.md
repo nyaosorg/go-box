@@ -1,5 +1,7 @@
 ( **English** / [Japanese](./release_note_ja.md) )
 
+- Update go-ttyadapter to v0.3.0 and use `go-ttyadapter/tty8pe` instead of `tty8` (#5)
+
 v3.0.0
 ======
 Nov 1, 2025
