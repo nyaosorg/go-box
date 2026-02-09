@@ -3,6 +3,8 @@
 
 ( [English](./release_note.md) / **Japanese** )
 
+- `Meta`+`Ctrl`+`G` と `Meta`+`Ctrl`+`C` も `Ctrl`+`G` と同様に機能するようにした。(#11)
+
 v3.1.0
 ------
 Feb 10, 2026

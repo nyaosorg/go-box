@@ -1,6 +1,8 @@
 Release notes
 =============
 
+- `Meta`+`Ctrl`+`G` and `Meta`+`Ctrl`+`C` can now be used to cancel input (#11)
+
 v3.1.0
 ------
 Feb 10, 2026
