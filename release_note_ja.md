@@ -1,5 +1,7 @@
 ( [English](./release_note.md) / **Japanese** )
 
+- go-ttyadapter を v0.3.0 へ更新。`tty8` のかわりに `go-ttyadapter/tty8pe` を使用 (#5)
+  - `Escape`キーは入力シーケンスの分断防止のためプリフィックスとして扱われるようになった。今後、キャンセルには `Ctrl`+`G` もしくは `Ctrl`+`C` を使用のこと (#7)
 - golang.org/x/sys を v0.29.0 から v0.30.0 へ更新 (#6)
 - clipperhouse/uax29 を v2.2.0 から v2.6.0 へ更新 (#6)
 
